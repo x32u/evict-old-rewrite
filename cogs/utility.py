@@ -24,10 +24,10 @@ from io import BytesIO
 from typing import Union, Optional, Any
 from shazamio import Shazam
 
-from tools.bot import Akari
+from tools.bot import Evict
 from tools.misc.views import Donate
 from tools.validators import ValidTime
-from tools.helpers import AkariContext
+from tools.helpers import EvictContext
 from tools.predicates import is_afk, is_there_a_reminder, reminder_exists
 from tools.misc.utils import (
     Timezone,
@@ -56,7 +56,7 @@ import rembg
 
 
 class Color(commands.Converter):
-    async def convert(self, ctx: AkariContext, argument: str):
+    async def convert(self, ctx: EvictContext, argument: str):
         argument = str(argument)
 
         if argument.lower() in ("random", "rand", "r"):
@@ -71,7 +71,7 @@ class Color(commands.Converter):
 
 
 class Utility(commands.Cog):
-    def __init__(self, bot: Akari):
+    def __init__(self, bot: Evict):
         self.bot = bot
         self.tz = Timezone(bot)
         self.description = "Utility commands"
@@ -254,7 +254,7 @@ class Utility(commands.Cog):
                 await self.cache_profile(after)
 
     @commands.command(aliases=["uwu"])
-    async def uwuify(self, ctx: AkariContext, *, message: str):
+    async def uwuify(self, ctx: EvictContext, *, message: str):
         """
         Convert a message to the uwu format
         """
@@ -266,7 +266,7 @@ class Utility(commands.Cog):
         return await ctx.reply(embed=embed)
 
     @commands.command(aliases=["foryou", "foryoupage"])
-    async def fyp(self, ctx: AkariContext):
+    async def fyp(self, ctx: EvictContext):
         "Get a random TikTok video"
 
         async with ctx.typing():
@@ -301,7 +301,7 @@ class Utility(commands.Cog):
 
     """@commands.command(aliases=["avh"])
     async def avatarhistory(
-        self, ctx: AkariContext, *, member: discord.User = commands.Author
+        self, ctx: EvictContext, *, member: discord.User = commands.Author
     ):
 
         results = await self.bot.db.fetchrow(
@@ -316,13 +316,13 @@ class Utility(commands.Cog):
 
         embed = discord.Embed(
             color=self.bot.color,
-            url=f"https://images.Akari.bot/avatarhistory/{member.id}",
+            url=f"https://images.evict.bot/avatarhistory/{member.id}",
             title=f"{member.name}'s avatar history ({length})",
         )
         return await ctx.reply(embed=embed)"""
 
     """@commands.command(aliases=["clearavs", "clearavh", "clearavatarhistory"])
-    async def clearavatars(self, ctx: AkariContext):
+    async def clearavatars(self, ctx: EvictContext):
 
 
         check = await self.bot.db.fetchrow(
@@ -360,7 +360,7 @@ class Utility(commands.Cog):
     @commands.command(aliases=["firstmsg"])
     async def firstmessage(
         self,
-        ctx: AkariContext,
+        ctx: EvictContext,
         *,
         channel: discord.TextChannel = commands.CurrentChannel,
     ):
@@ -369,14 +369,14 @@ class Utility(commands.Cog):
         """
 
         message = [mes async for mes in channel.history(limit=1, oldest_first=True)][0]
-        await ctx.akari_send(
+        await ctx.evict_send(
             f"the first message sent in {channel.mention} - [**jump**]({message.jump_url})"
         )
 
     @commands.hybrid_command(aliases=["av"])
     async def avatar(
         self,
-        ctx: AkariContext,
+        ctx: EvictContext,
         *,
         member: Union[discord.Member, discord.User] = commands.Author,
     ):
@@ -399,7 +399,7 @@ class Utility(commands.Cog):
     @commands.hybrid_command(aliases=["sav"])
     async def serveravatar(
         self,
-        ctx: AkariContext,
+        ctx: EvictContext,
         *,
         member: discord.Member = commands.Author,
     ):
@@ -426,13 +426,13 @@ class Utility(commands.Cog):
         aliases=["stickymsg", "sticky"],
         invoke_without_command=True,
     )
-    async def stickymessage(self, ctx: AkariContext):
+    async def stickymessage(self, ctx: EvictContext):
         return await ctx.create_pages()
 
     @stickymessage.command(name="add", brief="manage guild")
     @has_guild_permissions(manage_guild=True)
     async def stickymessage_add(
-        self, ctx: AkariContext, channel: TextChannel, *, code: str
+        self, ctx: EvictContext, channel: TextChannel, *, code: str
     ):
         """add a sticky message to the server"""
         check = await self.bot.db.fetchrow(
@@ -459,7 +459,7 @@ class Utility(commands.Cog):
 
     @stickymessage.command(name="remove", brief="manage guild")
     @has_guild_permissions(manage_guild=True)
-    async def stickymessage_remove(self, ctx: AkariContext, *, channel: TextChannel):
+    async def stickymessage_remove(self, ctx: EvictContext, *, channel: TextChannel):
         """remove a sticky message from the server"""
         check = await self.bot.db.fetchrow(
             "SELECT * FROM stickymessage WHERE channel_id = $1", channel.id
@@ -475,7 +475,7 @@ class Utility(commands.Cog):
         return await ctx.success(f"Deleted the sticky message from {channel.mention}")
 
     @commands.command(aliases=["pastusernanes", "usernames", "oldnames", "pastnames"])
-    async def names(self, ctx: AkariContext, *, user: discord.User = commands.Author):
+    async def names(self, ctx: EvictContext, *, user: discord.User = commands.Author):
         """
         Check a member's past usernames
         """
@@ -500,7 +500,7 @@ class Utility(commands.Cog):
         )
 
     @commands.command(aliases=["clearusernames", "deletenames", "deleteusernames"])
-    async def clearnames(self, ctx: AkariContext):
+    async def clearnames(self, ctx: EvictContext):
         """clear your username history"""
         check = await self.bot.db.fetchrow(
             "SELECT * FROM usernames WHERE user_id = $1", ctx.author.id
@@ -537,7 +537,7 @@ class Utility(commands.Cog):
 
     @commands.hybrid_command()
     async def banner(
-        self, ctx: AkariContext, *, member: discord.User = commands.Author
+        self, ctx: EvictContext, *, member: discord.User = commands.Author
     ):
         """
         Get someone's banner
@@ -569,7 +569,7 @@ class Utility(commands.Cog):
         return await ctx.reply(embed=embed)
 
     @commands.hybrid_command(aliases=["ri"])
-    async def roleinfo(self, ctx: AkariContext, *, role: Optional[discord.Role] = None):
+    async def roleinfo(self, ctx: EvictContext, *, role: Optional[discord.Role] = None):
         """
         Information about a role
         """
@@ -618,7 +618,7 @@ class Utility(commands.Cog):
 
     @commands.hybrid_command(name="channelinfo", aliases=["ci"])
     async def channelinfo(
-        self, ctx: AkariContext, *, channel: Optional[TextChannel] = None
+        self, ctx: EvictContext, *, channel: Optional[TextChannel] = None
     ):
         """
         view information about a channel
@@ -652,7 +652,7 @@ class Utility(commands.Cog):
         await ctx.reply(embed=embed)
 
     @commands.command()
-    async def donators(self, ctx: AkariContext):
+    async def donators(self, ctx: EvictContext):
         """
         Returns a list of all donators
         """
@@ -664,25 +664,25 @@ class Utility(commands.Cog):
                 f"<@!{result['user_id']}> - <t:{int(result['since'])}:R> {'<a:boost:1105870150588182539>' if result['status'] == 'boosted' else '💸'}"
                 for result in res
             ],
-            f"Akari donators ({len(results)})",
+            f"evict donators ({len(results)})",
         )
 
     @commands.hybrid_command()
     async def invites(
-        self, ctx: AkariContext, *, member: discord.Member = commands.Author
+        self, ctx: EvictContext, *, member: discord.Member = commands.Author
     ):
         """
         returns the number of invites you have in the server
         """
 
         invites = await ctx.guild.invites()
-        await ctx.akari_send(
+        await ctx.evict_send(
             f"{f'{member.mention} has' if member.id != ctx.author.id else 'You have'} **{sum(invite.uses for invite in invites if invite.inviter == member)} invites**"
         )
 
     @commands.command(aliases=["cs"], brief="manage messages")
     @commands.has_guild_permissions(manage_messages=True)
-    async def clearsnipes(self, ctx: AkariContext):
+    async def clearsnipes(self, ctx: EvictContext):
         """
         Clear the snipes from the channel
         """
@@ -698,7 +698,7 @@ class Utility(commands.Cog):
         await ctx.success("Cleared all snipes from this channel")
 
     @commands.command(aliases=["rs"])
-    async def reactionsnipe(self, ctx: AkariContext, index: int = 1):
+    async def reactionsnipe(self, ctx: EvictContext, index: int = 1):
         """
         Get the most recent message with a reaction removed in this channel
         """
@@ -723,16 +723,16 @@ class Utility(commands.Cog):
         result = snipes[::-1][index - 1]
         try:
             message = await ctx.channel.fetch_message(result["message"])
-            return await ctx.akari_send(
+            return await ctx.evict_send(
                 f"**{result['user']}** reacted with {result['reaction']} **{self.bot.humanize_date(datetime.datetime.fromtimestamp(int(result['created_at'])))}** [**here**]({message.jump_url})"
             )
         except:
-            return await ctx.akari_send(
+            return await ctx.evict_send(
                 f"**{result['user']}** reacted with {result['reaction']} **{self.bot.humanize_date(datetime.datetime.fromtimestamp(int(result['created_at'])))}**"
             )
 
     @commands.command(aliases=["ss", "screenie"])
-    async def screenshot(self, ctx: AkariContext, url: str):
+    async def screenshot(self, ctx: EvictContext, url: str):
         # Check if the URL is valid
         if not url.startswith(("https://", "http://")):
             url = f"https://{url}"
@@ -793,7 +793,7 @@ class Utility(commands.Cog):
             os.remove(screenshot_file)
 
     @commands.command(aliases=["es"])
-    async def editsnipe(self, ctx: AkariContext, index: int = 1):
+    async def editsnipe(self, ctx: EvictContext, index: int = 1):
         """
         Get the most recent edited message in the channel
         """
@@ -828,7 +828,7 @@ class Utility(commands.Cog):
         return await ctx.reply(embed=embed)
 
     @commands.command(aliases=["s"])
-    async def snipe(self, ctx: AkariContext, index: int = 1):
+    async def snipe(self, ctx: EvictContext, index: int = 1):
         """
         Get the most recent deleted message in the channel
         """
@@ -877,7 +877,7 @@ class Utility(commands.Cog):
             return await ctx.warning("There was an error getting snipes.")
 
     @commands.hybrid_command(aliases=["mc"])
-    async def membercount(self, ctx: AkariContext, invite: discord.Invite = None):
+    async def membercount(self, ctx: EvictContext, invite: discord.Invite = None):
         """
         Returns the number of members in your server or the server given
         """
@@ -901,7 +901,7 @@ class Utility(commands.Cog):
         return await ctx.reply(embed=embed)
 
     @commands.hybrid_command(aliases=["si", "ii", "inviteinfo"])
-    async def serverinfo(self, ctx: AkariContext, invite: discord.Invite = None):
+    async def serverinfo(self, ctx: EvictContext, invite: discord.Invite = None):
         """
         Get the information about a server
         """
@@ -968,7 +968,7 @@ class Utility(commands.Cog):
     @commands.hybrid_command(aliases=["user", "ui", "whois"])
     async def userinfo(
         self,
-        ctx: AkariContext,
+        ctx: EvictContext,
         *,
         member: Union[discord.Member, discord.User] = commands.Author,
     ):
@@ -1056,7 +1056,7 @@ class Utility(commands.Cog):
         await ctx.reply(embed=embed)
 
     @commands.hybrid_command()
-    async def weather(self, ctx: AkariContext, *, location: WeatherLocation):
+    async def weather(self, ctx: EvictContext, *, location: WeatherLocation):
         """
         Returns the weather of a location
         """
@@ -1085,7 +1085,7 @@ class Utility(commands.Cog):
         return await ctx.reply(embed=embed)
 
     @commands.hybrid_command()
-    async def roblox(self, ctx: AkariContext, user: RobloxUser):
+    async def roblox(self, ctx: EvictContext, user: RobloxUser):
         """
         Get someone's roblox profile
         """
@@ -1110,7 +1110,7 @@ class Utility(commands.Cog):
         await ctx.reply(embed=embed)
 
     @commands.hybrid_command(aliases=["snap"])
-    async def snapchat(self, ctx: AkariContext, user: SnapUser):
+    async def snapchat(self, ctx: EvictContext, user: SnapUser):
         """
         Get someone's snapchat profile
         """
@@ -1142,7 +1142,7 @@ class Utility(commands.Cog):
         await ctx.reply(embed=embed, view=view)
 
     @commands.hybrid_command(aliases=["ig"])
-    async def instagram(self, ctx: AkariContext, *, user: InstagramUser):
+    async def instagram(self, ctx: EvictContext, *, user: InstagramUser):
         """
         Get someone's instagram profile
         """
@@ -1166,7 +1166,7 @@ class Utility(commands.Cog):
         return await ctx.reply(embed=embed)
 
     @commands.hybrid_command(aliases=["tt"])
-    async def tiktok(self, ctx: AkariContext, *, user: TikTokUser):
+    async def tiktok(self, ctx: EvictContext, *, user: TikTokUser):
         """
         Get someone's tiktok profile
         """
@@ -1191,7 +1191,7 @@ class Utility(commands.Cog):
         await ctx.reply(embed=embed)
 
     @commands.hybrid_command(aliases=["git"])
-    async def github(self, ctx: AkariContext, *, user: GithubUser):
+    async def github(self, ctx: EvictContext, *, user: GithubUser):
         """
         Get someone's github profile
         """
@@ -1214,7 +1214,7 @@ class Utility(commands.Cog):
         await ctx.reply(embed=embed)
 
     @commands.hybrid_command(aliases=["fnshop"])
-    async def fortniteshop(self, ctx: AkariContext):
+    async def fortniteshop(self, ctx: EvictContext):
         """
         Get the fortnite item shop for today
         """
@@ -1231,7 +1231,7 @@ class Utility(commands.Cog):
 
     @commands.command(aliases=["splash"])
     async def serversplash(
-        self, ctx: AkariContext, *, invite: Optional[discord.Invite] = None
+        self, ctx: EvictContext, *, invite: Optional[discord.Invite] = None
     ):
         """
         Get a server's splash
@@ -1255,7 +1255,7 @@ class Utility(commands.Cog):
 
     @commands.command(aliases=["sbanner"])
     async def serverbanner(
-        self, ctx: AkariContext, *, invite: Optional[discord.Invite] = None
+        self, ctx: EvictContext, *, invite: Optional[discord.Invite] = None
     ):
         """
         Get a server's banner
@@ -1279,7 +1279,7 @@ class Utility(commands.Cog):
 
     @commands.command(aliases=["sicon"])
     async def servericon(
-        self, ctx: AkariContext, *, invite: Optional[discord.Invite] = None
+        self, ctx: EvictContext, *, invite: Optional[discord.Invite] = None
     ):
         """
         Get a server's icon
@@ -1302,7 +1302,7 @@ class Utility(commands.Cog):
         await ctx.reply(embed=embed)
 
     @commands.hybrid_command(aliases=["define"])
-    async def urban(self, ctx: AkariContext, *, word: str):
+    async def urban(self, ctx: EvictContext, *, word: str):
         """
         find a definition of a word
         """
@@ -1337,7 +1337,7 @@ class Utility(commands.Cog):
         return await ctx.paginator(embeds)
 
     @commands.command(aliases=["tr"])
-    async def translate(self, ctx: AkariContext, language: str, *, message: str):
+    async def translate(self, ctx: EvictContext, language: str, *, message: str):
         """
         Translate a message to a specific language
         """
@@ -1359,7 +1359,7 @@ class Utility(commands.Cog):
 
     @commands.hybrid_command()
     async def seen(
-        self, ctx: AkariContext, *, member: discord.Member = commands.Author
+        self, ctx: EvictContext, *, member: discord.Member = commands.Author
     ):
         """
         Check when a member was last seen
@@ -1378,13 +1378,13 @@ class Utility(commands.Cog):
         if not time:
             return await ctx.error("This member doesn't have any last seen record")
 
-        await ctx.akari_send(
+        await ctx.evict_send(
             f"**{member}** was last seen **{self.bot.humanize_date(datetime.datetime.fromtimestamp(time.timestamp()))}**"
         )
 
     @commands.hybrid_command()
     @is_afk()
-    async def afk(self, ctx: AkariContext, *, reason: str = "AFK"):
+    async def afk(self, ctx: EvictContext, *, reason: str = "AFK"):
         """
         let the members know that you're away
         """
@@ -1407,7 +1407,7 @@ class Utility(commands.Cog):
         await ctx.reply(embed=embed)
 
     @commands.command(aliases=["hex"])
-    async def dominant(self, ctx: AkariContext):
+    async def dominant(self, ctx: EvictContext):
         """
         Get the color of an image
         """
@@ -1433,7 +1433,7 @@ class Utility(commands.Cog):
         await ctx.reply(embed=embed)
 
     @commands.command()
-    async def youngest(self, ctx: AkariContext):
+    async def youngest(self, ctx: EvictContext):
         """
         Get the youngest account in the server
         """
@@ -1461,7 +1461,7 @@ class Utility(commands.Cog):
         await ctx.reply(embed=embed)
 
     @commands.command()
-    async def oldest(self, ctx: AkariContext):
+    async def oldest(self, ctx: EvictContext):
         """
         Get the oldest account in the server
         """
@@ -1491,7 +1491,7 @@ class Utility(commands.Cog):
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def picperms(
         self,
-        ctx: AkariContext,
+        ctx: EvictContext,
         member: discord.Member,
         *,
         channel: discord.TextChannel = commands.CurrentChannel,
@@ -1529,7 +1529,7 @@ class Utility(commands.Cog):
             )
 
     @commands.command()
-    async def roles(self, ctx: AkariContext):
+    async def roles(self, ctx: EvictContext):
         """
         Returns a list of server's roles
         """
@@ -1545,7 +1545,7 @@ class Utility(commands.Cog):
         )
 
     @commands.command()
-    async def muted(self, ctx: AkariContext):
+    async def muted(self, ctx: EvictContext):
         """
         Returns a list of muted members
         """
@@ -1563,7 +1563,7 @@ class Utility(commands.Cog):
         )
 
     @commands.command()
-    async def joins(self, ctx: AkariContext):
+    async def joins(self, ctx: EvictContext):
         """
         Returns a list of members that joined in the last 24 hours
         """
@@ -1593,7 +1593,7 @@ class Utility(commands.Cog):
     @commands.command()
     @commands.has_guild_permissions(ban_members=True)
     @commands.bot_has_guild_permissions(ban_members=True)
-    async def bans(self, ctx: AkariContext):
+    async def bans(self, ctx: EvictContext):
         """
         Returns a list of banned users
         """
@@ -1606,7 +1606,7 @@ class Utility(commands.Cog):
         )
 
     @commands.command()
-    async def bots(self, ctx: AkariContext):
+    async def bots(self, ctx: EvictContext):
         """
         Returns a list of all bots in this server
         """
@@ -1618,7 +1618,7 @@ class Utility(commands.Cog):
         )
 
     @commands.command()
-    async def boosters(self, ctx: AkariContext):
+    async def boosters(self, ctx: EvictContext):
         """
         Returns a list of members that boosted the server
         """
@@ -1640,7 +1640,7 @@ class Utility(commands.Cog):
         )
 
     @commands.command()
-    async def inrole(self, ctx: AkariContext, *, role: Union[discord.Role, str]):
+    async def inrole(self, ctx: EvictContext, *, role: Union[discord.Role, str]):
         """
         Get the list of members that have a specific
         """
@@ -1660,7 +1660,7 @@ class Utility(commands.Cog):
         )
 
     @commands.command()
-    async def shazam(self, ctx: AkariContext):
+    async def shazam(self, ctx: EvictContext):
         """
         Get the name of a music in a file using shazam
         """
@@ -1696,7 +1696,7 @@ class Utility(commands.Cog):
             await mes.edit(embed=embed)
 
     @commands.command(aliases=["ca"])
-    async def cashapp(self, ctx: AkariContext, user: CashappUser):
+    async def cashapp(self, ctx: EvictContext, user: CashappUser):
         """
         get someone's cashapp url and qr
         """
@@ -1704,7 +1704,7 @@ class Utility(commands.Cog):
         await ctx.reply(user.url, file=discord.File(user.qr, filename="cashapp_qr.png"))
 
     @commands.group(aliases=["tz"], invoke_without_command=True)
-    async def timezone(self, ctx: AkariContext, *, member: TimezoneMember = None):
+    async def timezone(self, ctx: EvictContext, *, member: TimezoneMember = None):
         """
         Get the member's current date
         """
@@ -1719,7 +1719,7 @@ class Utility(commands.Cog):
         await ctx.reply(embed=embed)
 
     @timezone.command(name="set")
-    async def timezone_set(self, ctx: AkariContext, *, timezone: TimezoneLocation):
+    async def timezone_set(self, ctx: EvictContext, *, timezone: TimezoneLocation):
         """
         Set your timezone
         """
@@ -1731,7 +1731,7 @@ class Utility(commands.Cog):
         await ctx.reply(embed=embed)
 
     @timezone.command(name="unset")
-    async def timezone_unset(self, ctx: AkariContext):
+    async def timezone_unset(self, ctx: EvictContext):
         """
         Unset your timezone
         """
@@ -1747,7 +1747,7 @@ class Utility(commands.Cog):
         return await ctx.success(f"You succesfully deleted your timezone")
 
     @timezone.command(name="list")
-    async def timezone_list(self, ctx: AkariContext):
+    async def timezone_list(self, ctx: EvictContext):
         """
         Get the timezones of everyone in this server
         """
@@ -1766,7 +1766,7 @@ class Utility(commands.Cog):
         )
 
     @commands.group(aliases=["bday"], invoke_without_command=True)
-    async def birthday(self, ctx: AkariContext, *, member: Optional[BdayMember] = None):
+    async def birthday(self, ctx: EvictContext, *, member: Optional[BdayMember] = None):
         """
         Get the birthday of an user
         """
@@ -1782,7 +1782,7 @@ class Utility(commands.Cog):
         await ctx.reply(embed=embed)
 
     @birthday.command(name="set")
-    async def bday_set(self, ctx: AkariContext, *, date: BdayDate):
+    async def bday_set(self, ctx: EvictContext, *, date: BdayDate):
         """
         Set your birthday
         """
@@ -1794,7 +1794,7 @@ class Utility(commands.Cog):
         await ctx.reply(embed=embed)
 
     @birthday.command(name="unset")
-    async def bday_unset(self, ctx: AkariContext):
+    async def bday_unset(self, ctx: EvictContext):
         """
         Unset your birthday
         """
@@ -1810,7 +1810,7 @@ class Utility(commands.Cog):
         return await ctx.success(f"You succesfully deleted your birthday")
 
     @birthday.command(name="list")
-    async def bday_list(self, ctx: AkariContext):
+    async def bday_list(self, ctx: EvictContext):
         """
         Get the birthdays of everyone in this server
         """
@@ -1834,7 +1834,7 @@ class Utility(commands.Cog):
 
     @reminder.command(name="add")
     @reminder_exists()
-    async def reminder_add(self, ctx: AkariContext, time: ValidTime, *, task: str):
+    async def reminder_add(self, ctx: EvictContext, time: ValidTime, *, task: str):
         """
         Make the bot remind you about a task
         """
@@ -1866,7 +1866,7 @@ class Utility(commands.Cog):
 
     @reminder.command(name="stop", aliases=["cancel"])
     @is_there_a_reminder()
-    async def reminder_stop(self, ctx: AkariContext):
+    async def reminder_stop(self, ctx: EvictContext):
         """
         Stop the bot from reminding you
         """
@@ -1885,7 +1885,7 @@ class Utility(commands.Cog):
 
     @commands.command(aliases=["remindme"])
     @reminder_exists()
-    async def remind(self, ctx: AkariContext, time: ValidTime, *, task: str):
+    async def remind(self, ctx: EvictContext, time: ValidTime, *, task: str):
         """
         Make the bot remind you about a task
         """
@@ -1914,7 +1914,7 @@ class Utility(commands.Cog):
                 )
 
     @commands.group(name="tag", aliases=["tags", "t"], invoke_without_command=True)
-    async def tag(self, ctx: AkariContext, *, tag: str):
+    async def tag(self, ctx: EvictContext, *, tag: str):
         """
         view a tag
         """
@@ -1937,7 +1937,7 @@ class Utility(commands.Cog):
 
     @tag.command(name="create", aliases=["make"], brief="manage server")
     @commands.has_guild_permissions(manage_guild=True)
-    async def tag_create(self, ctx: AkariContext, *, args: str):
+    async def tag_create(self, ctx: EvictContext, *, args: str):
         """
         create a tag
         """
@@ -1977,7 +1977,7 @@ class Utility(commands.Cog):
 
     @tag.command(name="remove", aliases=["delete", "del"], brief="manage server")
     @commands.has_guild_permissions(manage_guild=True)
-    async def tag_remove(self, ctx: AkariContext, *, tag: str):
+    async def tag_remove(self, ctx: EvictContext, *, tag: str):
         """
         delete a tag
         """
@@ -2006,7 +2006,7 @@ class Utility(commands.Cog):
 
     @tag.command(name="reset", brief="manage server")
     @commands.has_guild_permissions(manage_guild=True)
-    async def tag_reset(self, ctx: AkariContext):
+    async def tag_reset(self, ctx: EvictContext):
         """
         delete all tags in the guild
         """
@@ -2051,7 +2051,7 @@ class Utility(commands.Cog):
 
     @tag.command(name="list", brief="manage server")
     @commands.has_guild_permissions(manage_guild=True)
-    async def tag_list(self, ctx: AkariContext):
+    async def tag_list(self, ctx: EvictContext):
         """
         returns a list of all tags
         """
@@ -2074,7 +2074,7 @@ class Utility(commands.Cog):
         )
 
     @tag.command(name="random")
-    async def tag_random(self, ctx: AkariContext):
+    async def tag_random(self, ctx: EvictContext):
         """
         returns a random tag from the guild
         """
@@ -2097,7 +2097,7 @@ class Utility(commands.Cog):
         await ctx.reply(**x)
 
     @tag.command(name="edit", brief="tag owner")
-    async def tag_edit(self, ctx: AkariContext, *, args: str):
+    async def tag_edit(self, ctx: EvictContext, *, args: str):
         """
         edit a tag
         """
@@ -2142,7 +2142,7 @@ class Utility(commands.Cog):
         await ctx.success(f"Updated tag for **{name}**" + f"\n```{response}```")
 
     @tag.command(name="creator", aliases=["author"])
-    async def tag_creator(self, ctx: AkariContext, *, tag: str):
+    async def tag_creator(self, ctx: EvictContext, *, tag: str):
         """
         view the creator of a tag
         """
@@ -2161,10 +2161,10 @@ class Utility(commands.Cog):
             return await ctx.warning(f"No tag found for **{tag}**")
 
         user = self.bot.get_user(check["author_id"])
-        return await ctx.akari_send(f"The author of this tag is **{user}**")
+        return await ctx.evict_send(f"The author of this tag is **{user}**")
 
     @tag.command(name="search")
-    async def tag_search(self, ctx: AkariContext, *, query: str):
+    async def tag_search(self, ctx: EvictContext, *, query: str):
         """
         search for a tag
         """
@@ -2186,7 +2186,7 @@ class Utility(commands.Cog):
         )
 
     @commands.command(name="color", aliases=["colour"])
-    async def color(self, ctx: AkariContext, *, color: Color):
+    async def color(self, ctx: EvictContext, *, color: Color):
         """
         view info about a color
         """
@@ -2214,7 +2214,7 @@ class Utility(commands.Cog):
     @commands.command(name="transparent", aliases=["tp"])
     @commands.max_concurrency(1, commands.BucketType.channel, wait=True)
     @commands.cooldown(1, 6, commands.BucketType.user)
-    async def transparent(self, ctx: AkariContext, url: str = None):
+    async def transparent(self, ctx: EvictContext, url: str = None):
         """
         make an image transparent
         """
@@ -2250,7 +2250,7 @@ class Utility(commands.Cog):
 
     @commands.command(name="image", aliases=["img", "im"])
     @commands.cooldown(1, 1, commands.BucketType.member)
-    async def image(self, ctx: AkariContext, *, query: str):
+    async def image(self, ctx: EvictContext, *, query: str):
         """
         search for an image
         """
@@ -2284,5 +2284,5 @@ class Utility(commands.Cog):
         await ctx.paginator(entries)
 
 
-async def setup(bot: Akari) -> None:
+async def setup(bot: Evict) -> None:
     return await bot.add_cog(Utility(bot))

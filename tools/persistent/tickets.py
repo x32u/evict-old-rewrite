@@ -200,13 +200,13 @@ class DeleteTicket(discord.ui.Button):
 
     async def make_transcript(self, c: TextChannel):
         logId = secrets.token_hex(16)
-        logs_directory = "/root/AkariLogs/logs"
+        logs_directory = "/root/evictLogs/logs"
         file = f"{logs_directory}/{str(logId)}.html"
         os.makedirs(logs_directory, exist_ok=True)
         messages = await chat_exporter.export(c)
         with open(file, "w", encoding="utf-8") as f:
             f.write(messages)
-        return f"https://logs.akari.bot/{logId}"
+        return f"https://logs.evict.bot/{logId}"
 
     async def callback(self, interaction: discord.Interaction) -> None:
 

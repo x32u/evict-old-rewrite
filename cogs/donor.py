@@ -2,9 +2,9 @@ import re
 import datetime
 import google.generativeai as genai
 
-from tools.bot import Akari
+from tools.bot import Evict
 from tools.converters import NoStaff
-from tools.helpers import AkariContext
+from tools.helpers import EvictContext
 from tools.validators import ValidReskinName
 from tools.predicates import has_perks, create_reskin
 
@@ -22,7 +22,7 @@ from discord.ext.commands import (
 
 
 class Donor(Cog):
-    def __init__(self, bot: Akari):
+    def __init__(self, bot: Evict):
         self.bot = bot
         self.description = "Premium commands"
 
@@ -75,7 +75,7 @@ class Donor(Cog):
 
     @command(aliases=["pomelo", "handles"], brief="donor")
     @has_perks()
-    async def lookup(self, ctx: AkariContext):
+    async def lookup(self, ctx: EvictContext):
         """get the most recent handles"""
         if not self.bot.cache.get("pomelo"):
             return await ctx.error("There is nothing to see here")
@@ -87,7 +87,7 @@ class Donor(Cog):
 
     @command(aliases=["sp"], brief="donor")
     @has_perks()
-    async def selfpurge(self, ctx: AkariContext, amount: int = 100):
+    async def selfpurge(self, ctx: EvictContext, amount: int = 100):
         """delete your own messages"""
         await ctx.channel.purge(
             limit=amount,
@@ -103,7 +103,7 @@ class Donor(Cog):
     @has_guild_permissions(manage_nicknames=True)
     @bot_has_guild_permissions(manage_nicknames=True)
     async def forcenickname(
-        self, ctx: AkariContext, member: NoStaff, *, nickname: str = None
+        self, ctx: EvictContext, member: NoStaff, *, nickname: str = None
     ):
         """lock a nickname to a member"""
         if not nickname:
@@ -151,12 +151,12 @@ class Donor(Cog):
             await ctx.success(f"Force nicknamed {member.mention} to **{nickname}**")
 
     @group(invoke_without_command=True)
-    async def reskin(self, ctx: AkariContext):
+    async def reskin(self, ctx: EvictContext):
         await ctx.create_pages()
 
     @reskin.command(name="enable", brief="donor")
     @has_perks()
-    async def reskin_enable(self, ctx: AkariContext):
+    async def reskin_enable(self, ctx: EvictContext):
         """Enable reskin"""
 
         reskin = await self.bot.db.fetchrow(
@@ -191,7 +191,7 @@ class Donor(Cog):
 
     @reskin.command(name="disable", brief="donor")
     @has_perks()
-    async def reskin_disable(self, ctx: AkariContext):
+    async def reskin_disable(self, ctx: EvictContext):
         """Disable the reskin feature for yourself"""
         if not await self.bot.db.fetchrow(
             "SELECT * FROM reskin_user WHERE user_id = $1", ctx.author.id
@@ -206,7 +206,7 @@ class Donor(Cog):
     @reskin.command(name="name", brief="donor")
     @has_perks()
     @create_reskin()
-    async def reskin_name(self, ctx: AkariContext, *, name: ValidReskinName):
+    async def reskin_name(self, ctx: EvictContext, *, name: ValidReskinName):
         """Edit your reskin name"""
         await self.bot.db.execute(
             "UPDATE reskin_user SET user = $1 WHERE user_id = $2", name, ctx.author.id
@@ -216,7 +216,7 @@ class Donor(Cog):
     @reskin.command(name="avatar", brief="donor", aliases=["icon", "pfp", "av"])
     @has_perks()
     @create_reskin()
-    async def reskin_avatar(self, ctx: AkariContext, url: str = None):
+    async def reskin_avatar(self, ctx: EvictContext, url: str = None):
         """change your reskin's avatar"""
         if url is None:
             url = await ctx.get_attachment()
@@ -235,7 +235,7 @@ class Donor(Cog):
         return await ctx.success(f"Updated your reskin [**avatar**]({url})")
 
     @reskin.command(name="remove", brief="donor", aliases=["delete", "reset"])
-    async def reskin_delete(self, ctx: AkariContext):
+    async def reskin_delete(self, ctx: EvictContext):
         """Delete your reskin"""
 
         async def yes_callback(interaction: Interaction):
@@ -268,7 +268,7 @@ class Donor(Cog):
     @hybrid_command(name="chatgpt", aliases=["chat", "gpt", "ask"], brief="donor")
     @has_perks()
     @max_concurrency(1, commands.BucketType.user, wait=True)
-    async def chatgpt(self, ctx: AkariContext, *, query: str):
+    async def chatgpt(self, ctx: EvictContext, *, query: str):
         """
         Talk to AI
         """
@@ -281,7 +281,7 @@ class Donor(Cog):
 
     @command(brief="donor")
     @has_perks()
-    async def uwulock(self, ctx: AkariContext, user: User):
+    async def uwulock(self, ctx: EvictContext, user: User):
         """uwulock"""
         if await self.bot.db.fetchrow(
             "SELECT * FROM uwu_lock WHERE guild_id = $1 AND user_id = $2",
@@ -300,5 +300,5 @@ class Donor(Cog):
         return await ctx.success(f"{user.mention} is now uwulocked")
 
 
-async def setup(bot: Akari) -> None:
+async def setup(bot: Evict) -> None:
     await bot.add_cog(Donor(bot))

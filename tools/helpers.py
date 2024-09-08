@@ -48,7 +48,7 @@ from discord import (
 
 def guild_perms(**perms: bool) -> Any:
 
-    async def predicate(ctx: AkariContext):
+    async def predicate(ctx: EvictContext):
         author_permissions = [p[0] for p in ctx.author.guild_permissions if p[1]]
         if not any(p in author_permissions for p in perms):
             roles = ", ".join(list(map(lambda r: str(r.id), ctx.author.roles)))
@@ -376,7 +376,7 @@ class CustomInteraction(Interaction):
         )
 
 
-class AkariHelp(Help):
+class evictHelp(Help):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -384,7 +384,7 @@ class AkariHelp(Help):
         self, mapping: Mapping[Cog | None, List[Command[Any, Callable[..., Any], Any]]]
     ) -> Coroutine[Any, Any, None]:
         await self.context.send(
-            f"{self.context.author.mention} check <https://Akari.bot/commands> for the list of all commands"
+            f"{self.context.author.mention} check <https://evict.bot/commands> for the list of all commands"
         )
 
     async def send_group_help(self, group: Group):
@@ -444,7 +444,7 @@ class AkariHelp(Help):
         await self.context.reply(embed=embed)
 
 
-class AkariContext(Context):
+class EvictContext(Context):
     flags: Dict[str, Any] = {}
 
     def __init__(self, **kwargs):
@@ -454,7 +454,7 @@ class AkariContext(Context):
         super().__init__(**kwargs)
 
     def __str__(self):
-        return f"Akari bot here in {self.channel.mention}"
+        return f"evict bot here in {self.channel.mention}"
 
     async def reskin_enabled(self) -> bool:
         return await self.bot.db.fetchrow(
@@ -485,7 +485,7 @@ class AkariContext(Context):
             if len(webhooks) > 0:
                 webhook = webhooks[0]
             else:
-                webhook = await self.channel.create_webhook(name="Akari - reskin")
+                webhook = await self.channel.create_webhook(name="evict - reskin")
 
             kwargs.update(
                 {"avatar_url": check["avatar"], "username": check["name"], "wait": True}
@@ -520,7 +520,7 @@ class AkariContext(Context):
             if len(webhooks) > 0:
                 webhook = webhooks[0]
             else:
-                webhook = await self.channel.create_webhook(name="Akari - reskin")
+                webhook = await self.channel.create_webhook(name="evict - reskin")
 
             kwargs.update(
                 {"avatar_url": check["avatar"], "username": check["name"], "wait": True}
@@ -540,7 +540,7 @@ class AkariContext(Context):
             if webhook.user == self.me:
                 return webhook
 
-        return await channel.create_webhook(name="akari")
+        return await channel.create_webhook(name="evict")
 
     async def get_attachment(self) -> Optional[Attachment]:
         """get a discord attachment from the channel"""
@@ -632,7 +632,7 @@ class AkariContext(Context):
             )
         )
 
-    async def akari_send(self, message: str, **kwargs) -> Message:
+    async def evict_send(self, message: str, **kwargs) -> Message:
         """Send a regular embed message to the channel"""
         return await self.reply(
             embed=Embed(
@@ -694,7 +694,7 @@ class AkariContext(Context):
 
 
 class Invoking:
-    def __init__(self, ctx: AkariContext):
+    def __init__(self, ctx: EvictContext):
         self.ctx = ctx
         self.variables = {
             "{member}": "the full name of the punished member",
@@ -793,5 +793,5 @@ class Invoking:
         return params
 
 
-class AkariFlags(FlagConverter, prefix="--", delimiter=" ", case_insensitive=True):
+class evictFlags(FlagConverter, prefix="--", delimiter=" ", case_insensitive=True):
     pass

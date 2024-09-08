@@ -10,12 +10,12 @@ from discord.ext.commands import Cog, command, is_owner, group
 from discord.ext import tasks
 from jishaku.codeblocks import codeblock_converter
 
-from tools.bot import Akari
-from tools.helpers import AkariContext
+from tools.bot import Evict
+from tools.helpers import EvictContext
 
 
 class Owner(Cog):
-    def __init__(self, bot: Akari):
+    def __init__(self, bot: Evict):
         self.bot = bot
 
     async def add_donor_role(self, member: User):
@@ -89,18 +89,18 @@ class Owner(Cog):
 
     @command(aliases=["py"])
     @is_owner()
-    async def eval(self, ctx: AkariContext, *, argument: codeblock_converter):
+    async def eval(self, ctx: EvictContext, *, argument: codeblock_converter):
         return await ctx.invoke(self.bot.get_command("jsk py"), argument=argument)
 
     @command()
     @is_owner()
-    async def restart(self, ctx: AkariContext):
+    async def restart(self, ctx: EvictContext):
         await ctx.reply("restarting the bot...")
         os.system("pm2 restart 0")
 
     @command()
     @is_owner()
-    async def portal(self, ctx: AkariContext, id: int):
+    async def portal(self, ctx: EvictContext, id: int):
 
         guild = self.bot.get_guild(id)
 
@@ -122,7 +122,7 @@ class Owner(Cog):
 
     @command()
     @is_owner()
-    async def anowner(self, ctx: AkariContext, guild: Guild, member: User):
+    async def anowner(self, ctx: EvictContext, guild: Guild, member: User):
         """change the antinuke owner in case the real owner cannot access discord"""
         if await self.bot.db.fetchrow(
             "SELECT * FROM antinuke WHERE guild_id = $1", guild.id
@@ -145,12 +145,12 @@ class Owner(Cog):
 
     @command()
     @is_owner()
-    async def guilds(self, ctx: AkariContext):
+    async def guilds(self, ctx: EvictContext):
         """all guilds the bot is in, sorted from the biggest to the smallest"""
         servers = sorted(self.bot.guilds, key=lambda g: g.member_count, reverse=True)
         return await ctx.paginate(
             [f"{g.name} - {g.member_count:,} members" for g in servers],
-            "Akari's servers",
+            "evict's servers",
         )
 
     @group(invoke_without_command=True)
@@ -160,7 +160,7 @@ class Owner(Cog):
 
     @donor.command(name="add")
     @is_owner()
-    async def donor_add(self, ctx: AkariContext, *, member: User):
+    async def donor_add(self, ctx: EvictContext, *, member: User):
         """add donator perks to a member"""
 
         check = await self.bot.db.fetchrow(
@@ -183,7 +183,7 @@ class Owner(Cog):
 
     @donor.command(name="remove")
     @is_owner()
-    async def donor_remove(self, ctx: AkariContext, *, member: User):
+    async def donor_remove(self, ctx: EvictContext, *, member: User):
         """Remove donator perks from a member"""
 
         check = await self.bot.db.fetchrow(
@@ -202,7 +202,7 @@ class Owner(Cog):
 
     @command()
     @is_owner()
-    async def mutuals(self, ctx: AkariContext, *, user: User):
+    async def mutuals(self, ctx: EvictContext, *, user: User):
         """Returns mutual servers between the member and the bot"""
 
         if len(user.mutual_guilds) == 0:
@@ -219,7 +219,7 @@ class Owner(Cog):
 
     @command(name="globalenable")
     @is_owner()
-    async def globalenable(self, ctx: AkariContext, cmd: str = ""):
+    async def globalenable(self, ctx: EvictContext, cmd: str = ""):
         """
         Globally enable a command.
         """
@@ -246,7 +246,7 @@ class Owner(Cog):
 
     @command(name="globaldisable")
     @is_owner()
-    async def globaldisable(self, ctx: AkariContext, cmd: str = ""):
+    async def globaldisable(self, ctx: EvictContext, cmd: str = ""):
         """
         Globally disable a command.
         """
@@ -280,7 +280,7 @@ class Owner(Cog):
 
     @command(name="globaldisabledlist", aliases=["gdl"])
     @is_owner()
-    async def globaldisabledlist(self, ctx: AkariContext):
+    async def globaldisabledlist(self, ctx: EvictContext):
         """
         Show all commands that are globally disabled.
         """
@@ -304,7 +304,7 @@ class Owner(Cog):
         )
 
     @command(aliases=["trace"])
-    async def error(self, ctx: AkariContext, code: str):
+    async def error(self, ctx: EvictContext, code: str):
         """
         View information about an error code
         """
@@ -347,7 +347,7 @@ class Owner(Cog):
     @is_owner()
     async def globalban(
         self,
-        ctx: AkariContext,
+        ctx: EvictContext,
         user: User,
         *,
         reason: str = "Globally banned by a bot owner",
@@ -394,7 +394,7 @@ class Owner(Cog):
 
     @blacklist.command(name="user")
     @is_owner()
-    async def blacklist_user(self, ctx: AkariContext, *, user: User):
+    async def blacklist_user(self, ctx: EvictContext, *, user: User):
         """blacklist or unblacklist a member"""
 
         if user.id in self.bot.owner_ids:
@@ -404,15 +404,15 @@ class Owner(Cog):
             await self.bot.db.execute(
                 "INSERT INTO blacklist VALUES ($1,$2)", user.id, "user"
             )
-            return await ctx.success(f"Blacklisted {user.mention} from Akari")
+            return await ctx.success(f"Blacklisted {user.mention} from evict")
 
         except:
             await self.bot.db.execute("DELETE FROM blacklist WHERE id = $1", user.id)
-            return await ctx.success(f"Unblacklisted {user.mention} from Akari")
+            return await ctx.success(f"Unblacklisted {user.mention} from evict")
 
     @blacklist.command(name="server")
     @is_owner()
-    async def blacklist_server(self, ctx: AkariContext, *, server_id: int):
+    async def blacklist_server(self, ctx: EvictContext, *, server_id: int):
         """blacklist a server"""
         if server_id in [950153022405763124]:
             return await ctx.error("Cannot blacklist this server")
@@ -425,15 +425,15 @@ class Owner(Cog):
             guild = self.bot.get_guild(server_id)
             if guild:
                 await guild.leave()
-            return await ctx.success(f"Blacklisted server {server_id} from Akari")
+            return await ctx.success(f"Blacklisted server {server_id} from evict")
 
         except:
             await self.bot.db.execute("DELETE FROM blacklist WHERE id = $1", server_id)
-            return await ctx.success(f"Unblacklisted server {server_id} from Akari")
+            return await ctx.success(f"Unblacklisted server {server_id} from evict")
 
     @command(name="reload", aliases=["rl"])
     @is_owner()
-    async def reload(self, ctx: AkariContext, *, module: str):
+    async def reload(self, ctx: EvictContext, *, module: str):
         """
         Reload a module
         """
@@ -474,5 +474,5 @@ class Owner(Cog):
         )
 
 
-async def setup(bot: Akari) -> None:
+async def setup(bot: Evict) -> None:
     await bot.add_cog(Owner(bot))

@@ -3,7 +3,7 @@ import aiohttp
 from pydantic import BaseModel
 from discord.ext import commands
 from typing import List, Optional
-from tools.helpers import AkariContext
+from tools.helpers import EvictContext
 
 
 class TikTok(BaseModel):
@@ -23,13 +23,13 @@ class TikTok(BaseModel):
 
 
 class TikTokUser(commands.Converter):
-    async def convert(self, ctx: AkariContext, argument: str) -> TikTok:
+    async def convert(self, ctx: EvictContext, argument: str) -> TikTok:
         async with ctx.typing():
             async with aiohttp.ClientSession(
-                headers={"api-key": ctx.bot.akari_api}
+                headers={"api-key": ctx.bot.evict_api}
             ) as cs:
                 async with cs.get(
-                    "https://api.akari.bot/tiktok", params={"username": argument}
+                    "https://kure.pl/tiktok", params={"username": argument}
                 ) as r:
                     if r.status != 200:
                         raise commands.BadArgument("Couldn't get this tiktok page")

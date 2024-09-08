@@ -2,8 +2,8 @@ import arrow
 import datetime
 import discord
 
-from ..bot import Akari
-from ..helpers import AkariContext
+from ..bot import evict
+from ..helpers import EvictContext
 
 from discord import User, Member
 from discord.ext.commands import Converter, BadArgument, MemberConverter
@@ -25,7 +25,7 @@ class TimezoneSchema(BaseModel):
 
 
 class Timezone:
-    def __init__(self, bot: Akari):
+    def __init__(self, bot: Evict):
         self.bot = bot
 
         self.week_days = {
@@ -114,7 +114,7 @@ class Timezone:
 
 
 class TimezoneMember(MemberConverter):
-    async def convert(self, ctx: AkariContext, argument: str):
+    async def convert(self, ctx: EvictContext, argument: str):
 
         if not argument:
             return None
@@ -134,13 +134,13 @@ class TimezoneMember(MemberConverter):
 
 
 class TimezoneLocation(Converter):
-    async def convert(self, ctx: AkariContext, argument: str):
+    async def convert(self, ctx: EvictContext, argument: str):
         tz = Timezone(ctx.bot)
         return await tz.set_timezone(ctx.author, argument)
 
 
 class BdayDate(Converter):
-    async def convert(self, ctx: AkariContext, argument: str):
+    async def convert(self, ctx: EvictContext, argument: str):
         bdays = argument.split()
 
         if len(bdays) < 2:
@@ -152,7 +152,7 @@ class BdayDate(Converter):
 
 
 class BdayMember(MemberConverter):
-    async def convert(self, ctx: AkariContext, argument: str):
+    async def convert(self, ctx: EvictContext, argument: str):
         if argument is None:
             return None
 
@@ -179,7 +179,7 @@ class BdayMember(MemberConverter):
 
 
 class Birthday:
-    def __init__(self, bot: Akari):
+    def __init__(self, bot: Evict):
         self.bot = bot
         self.months = {
             "january": 1,

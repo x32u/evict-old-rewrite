@@ -5,14 +5,14 @@ from discord.ext.commands import Cog, group, has_guild_permissions
 
 from typing import Union
 
-from tools.bot import Akari
-from tools.helpers import AkariContext
+from tools.bot import Evict
+from tools.helpers import EvictContext
 from tools.converters import HexColor, NewRoleConverter
 from tools.predicates import br_is_configured, has_br_role, boosted_to
 
 
 class Boosterrole(Cog):
-    def __init__(self, bot: Akari):
+    def __init__(self, bot: Evict):
         self.bot = bot
         self.description = "Manage your personal booster role"
 
@@ -69,7 +69,7 @@ class Boosterrole(Cog):
 
     @boosterrole.command(name="setup", brief="manage guild")
     @has_guild_permissions(manage_guild=True)
-    async def br_setup(self, ctx: AkariContext):
+    async def br_setup(self, ctx: EvictContext):
         """
         Setup the booster role module
         """
@@ -87,7 +87,7 @@ class Boosterrole(Cog):
     @boosterrole.command(name="reset", brief="manage guild")
     @has_guild_permissions(manage_guild=True)
     @br_is_configured()
-    async def br_reset(self, ctx: AkariContext):
+    async def br_reset(self, ctx: EvictContext):
         """
         Disable the booster role module
         """
@@ -132,7 +132,7 @@ class Boosterrole(Cog):
 
     @br_award.command(name="add", brief="manage guild")
     @has_guild_permissions(manage_guild=True)
-    async def br_award_add(self, ctx: AkariContext, *, role: NewRoleConverter):
+    async def br_award_add(self, ctx: EvictContext, *, role: NewRoleConverter):
         """
         Add a role to the booster role awards
         """
@@ -151,7 +151,7 @@ class Boosterrole(Cog):
 
     @br_award.command(name="remove", brief="manage guild")
     @has_guild_permissions(manage_guild=True)
-    async def br_award_remove(self, ctx: AkariContext, *, role: NewRoleConverter):
+    async def br_award_remove(self, ctx: EvictContext, *, role: NewRoleConverter):
         """
         Remove a role from the booster role awards
         """
@@ -171,7 +171,7 @@ class Boosterrole(Cog):
         return await ctx.success(f"Removed {role.mention} from the booster role awards")
 
     @br_award.command(name="list")
-    async def br_award_list(self, ctx: AkariContext):
+    async def br_award_list(self, ctx: EvictContext):
         """
         Returns all the booster role awards in this server
         """
@@ -190,7 +190,7 @@ class Boosterrole(Cog):
     @boosterrole.command(name="base", brief="manage guild")
     @has_guild_permissions(manage_guild=True)
     @br_is_configured()
-    async def br_base(self, ctx: AkariContext, *, role: Role = None):
+    async def br_base(self, ctx: EvictContext, *, role: Role = None):
         """
         Create the booster roles above the given role
         """
@@ -218,7 +218,7 @@ class Boosterrole(Cog):
 
     @boosterrole.command(name="create", brief="server booster")
     @br_is_configured()
-    async def br_create(self, ctx: AkariContext, *, name: str = None):
+    async def br_create(self, ctx: EvictContext, *, name: str = None):
         """
         Create a booster role
         """
@@ -259,7 +259,7 @@ class Boosterrole(Cog):
 
     @boosterrole.command(name="name", brief="server booster")
     @has_br_role()
-    async def br_name(self, ctx: AkariContext, *, name: str):
+    async def br_name(self, ctx: EvictContext, *, name: str):
         """
         Edit your booster role name
         """
@@ -286,7 +286,7 @@ class Boosterrole(Cog):
 
     @boosterrole.command(name="color", brief="server booster")
     @has_br_role()
-    async def br_color(self, ctx: AkariContext, *, color: HexColor):
+    async def br_color(self, ctx: EvictContext, *, color: HexColor):
         """
         Edit the booster role color
         """
@@ -314,7 +314,7 @@ class Boosterrole(Cog):
     @boosterrole.command(name="icon", brief="server booster")
     @has_br_role()
     @boosted_to(2)
-    async def br_icon(self, ctx: AkariContext, *, emoji: Union[PartialEmoji, str]):
+    async def br_icon(self, ctx: EvictContext, *, emoji: Union[PartialEmoji, str]):
         """
         Edit the booster role icon
         """
@@ -343,7 +343,7 @@ class Boosterrole(Cog):
 
     @boosterrole.command(name="delete", brief="server booster")
     @has_br_role()
-    async def br_delete(self, ctx: AkariContext):
+    async def br_delete(self, ctx: EvictContext):
         """
         Delete your booster role
         """
@@ -367,7 +367,7 @@ class Boosterrole(Cog):
         return await ctx.success("Booster role deleted")
 
     @boosterrole.command(name="list")
-    async def br_list(self, ctx: AkariContext):
+    async def br_list(self, ctx: EvictContext):
         """
         Returns a list of all booster roles created in this server
         """
@@ -388,5 +388,5 @@ class Boosterrole(Cog):
         )
 
 
-async def setup(bot: Akari) -> None:
+async def setup(bot: Evict) -> None:
     return await bot.add_cog(Boosterrole(bot))

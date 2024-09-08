@@ -4,7 +4,7 @@ import datetime
 from discord.ext.commands import check, BadArgument
 
 from .persistent.vm import rename_vc_bucket
-from .helpers import AkariContext
+from .helpers import EvictContext
 
 """
 
@@ -14,7 +14,7 @@ LEVELING PREDICATES
 
 
 def leveling_enabled():
-    async def predicate(ctx: AkariContext):
+    async def predicate(ctx: EvictContext):
         if await ctx.bot.db.fetchrow(
             "SELECT * FROM leveling WHERE guild_id = $1", ctx.guild.id
         ):
@@ -34,7 +34,7 @@ ANTINUKE PREDICATES
 
 
 def antinuke_owner():
-    async def predicate(ctx: AkariContext):
+    async def predicate(ctx: EvictContext):
         if owner_id := await ctx.bot.db.fetchval(
             "SELECT owner_id FROM antinuke WHERE guild_id = $1", ctx.guild.id
         ):
@@ -49,7 +49,7 @@ def antinuke_owner():
 
 
 def antinuke_configured():
-    async def predicate(ctx: AkariContext):
+    async def predicate(ctx: EvictContext):
         check = await ctx.bot.db.fetchval(
             "SELECT configured FROM antinuke WHERE guild_id = $1", ctx.guild.id
         )
@@ -61,7 +61,7 @@ def antinuke_configured():
 
 
 def admin_antinuke():
-    async def predicate(ctx: AkariContext):
+    async def predicate(ctx: EvictContext):
         check = await ctx.bot.db.fetchrow(
             "SELECT owner_id, admins FROM antinuke WHERE guild_id = $1", ctx.guild.id
         )
@@ -89,7 +89,7 @@ BOOSTER ROLES PREDICATES
 
 
 def br_is_configured():
-    async def predicate(ctx: AkariContext):
+    async def predicate(ctx: EvictContext):
         check = await ctx.bot.db.fetchrow(
             "SELECT * FROM booster_module WHERE guild_id = $1", ctx.guild.id
         )
@@ -101,7 +101,7 @@ def br_is_configured():
 
 
 def has_br_role():
-    async def predicate(ctx: AkariContext):
+    async def predicate(ctx: EvictContext):
         check = await ctx.bot.db.fetchrow(
             "SELECT * FROM booster_roles WHERE guild_id = $1 AND user_id = $2",
             ctx.guild.id,
@@ -124,7 +124,7 @@ LIMIT PREDICATES
 
 
 def query_limit(table: str):
-    async def predicate(ctx: AkariContext):
+    async def predicate(ctx: EvictContext):
         check = await ctx.bot.db.fetchval(
             f"SELECT COUNT(*) FROM {table} WHERE guild_id = $1", ctx.guild.id
         )
@@ -137,7 +137,7 @@ def query_limit(table: str):
 
 
 def boosted_to(level: int):
-    async def predicate(ctx: AkariContext):
+    async def predicate(ctx: EvictContext):
         if ctx.guild.premium_tier < level:
             await ctx.warning(
                 f"The server has to be boosted to level **{level}** to be able to use this command"
@@ -148,7 +148,7 @@ def boosted_to(level: int):
 
 
 def max_gws():
-    async def predicate(ctx: AkariContext):
+    async def predicate(ctx: EvictContext):
         check = await ctx.bot.db.fetchval(
             "SELECT COUNT(*) FROM giveaway WHERE guild_id = $1", ctx.guild.id
         )
@@ -170,7 +170,7 @@ OWNER PREDICATES
 
 
 def guild_owner():
-    async def predicate(ctx: AkariContext):
+    async def predicate(ctx: EvictContext):
         if ctx.author.id != ctx.guild.owner_id:
             await ctx.warning(f"This command can be only used by **{ctx.guild.owner}**")
         return ctx.author.id == ctx.guild.owner_id
@@ -186,7 +186,7 @@ MODERATION PREDICATES
 
 
 def is_jail():
-    async def predicate(ctx: AkariContext):
+    async def predicate(ctx: EvictContext):
         check = await ctx.bot.db.fetchrow(
             "SELECT * FROM jail WHERE guild_id = $1", ctx.guild.id
         )
@@ -198,7 +198,7 @@ def is_jail():
 
 
 def antispam_enabled():
-    async def predicate(ctx: AkariContext):
+    async def predicate(ctx: EvictContext):
         if not await ctx.bot.db.fetchrow(
             "SELECT * FROM antispam WHERE guild_id = $1", ctx.guild.id
         ):
@@ -217,7 +217,7 @@ DONATOR PREDICATES
 
 
 def create_reskin():
-    async def predicate(ctx: AkariContext):
+    async def predicate(ctx: EvictContext):
         if not await ctx.reskin_enabled():
             await ctx.warning("Reskin is **not** enabled in this server")
             return False
@@ -240,13 +240,13 @@ def create_reskin():
 
 
 def has_perks():
-    async def predicate(ctx: AkariContext):
+    async def predicate(ctx: EvictContext):
         check = await ctx.bot.db.fetchrow(
             "SELECT * FROM donor WHERE user_id = $1", ctx.author.id
         )
         if not check:
             await ctx.warning(
-                f"You need [**donator**](https://discord.gg/akaribot) perks to use this command"
+                f"You need [**donator**](https://discord.gg/evict) perks to use this command"
             )
         return check is not None
 
@@ -261,7 +261,7 @@ MUSIC PREDICATES
 
 
 def is_voice():
-    async def predicate(ctx: AkariContext):
+    async def predicate(ctx: EvictContext):
         if not ctx.author.voice:
             await ctx.warning("You are not in a voice channel")
             return False
@@ -275,7 +275,7 @@ def is_voice():
 
 
 def bot_is_voice():
-    async def predicate(ctx: AkariContext):
+    async def predicate(ctx: EvictContext):
         if not ctx.guild.me.voice:
             await ctx.warning("The bot is not in a voice channel")
             return False
@@ -290,7 +290,7 @@ def bot_is_voice():
 
 
 def lastfm_user_exists():
-    async def predicate(ctx: AkariContext):
+    async def predicate(ctx: EvictContext):
         check = await ctx.bot.db.fetchrow(
             "SELECT * FROM lastfm WHERE user_id = $1", ctx.author.id
         )
@@ -310,7 +310,7 @@ ECONOMY PREDICATES
 
 
 def create_account():
-    async def predicate(ctx: AkariContext):
+    async def predicate(ctx: EvictContext):
         check = await ctx.bot.db.fetchrow(
             "SELECT * FROM economy WHERE user_id = $1", ctx.author.id
         )
@@ -327,7 +327,7 @@ def create_account():
 
 
 def dice_cooldown():
-    async def predicate(ctx: AkariContext):
+    async def predicate(ctx: EvictContext):
         check = await ctx.bot.db.fetchrow(
             "SELECT dice FROM economy WHERE user_id = $1", ctx.author.id
         )
@@ -344,7 +344,7 @@ def dice_cooldown():
 
 
 def daily_taken():
-    async def predicate(ctx: AkariContext):
+    async def predicate(ctx: EvictContext):
         check = await ctx.bot.db.fetchrow(
             "SELECT daily FROM economy WHERE user_id = $1", ctx.author.id
         )
@@ -368,13 +368,13 @@ VOICEMASTER PREDICATES
 
 
 def rename_cooldown():
-    async def predicate(ctx: AkariContext):
+    async def predicate(ctx: EvictContext):
         return await rename_vc_bucket(ctx.bot, ctx.author.voice.channel)
 
     return check(predicate)
 
 
-async def check_owner(ctx: AkariContext):
+async def check_owner(ctx: EvictContext):
     check = await ctx.bot.db.fetchrow(
         "SELECT * FROM vcs WHERE voice = $1 AND user_id = $2",
         ctx.author.voice.channel.id,
@@ -385,7 +385,7 @@ async def check_owner(ctx: AkariContext):
         return True
 
 
-async def check_voice(ctx: AkariContext):
+async def check_voice(ctx: EvictContext):
     check = await ctx.bot.db.fetchrow(
         "SELECT * FROM voicemaster WHERE guild_id = $1", ctx.guild.id
     )
@@ -403,7 +403,7 @@ async def check_voice(ctx: AkariContext):
 
 
 def is_vm():
-    async def predicate(ctx: AkariContext):
+    async def predicate(ctx: EvictContext):
         check = await ctx.bot.db.fetchrow(
             "SELECT * FROM voicemaster WHERE guild_id = $1", ctx.guild.id
         )
@@ -415,7 +415,7 @@ def is_vm():
 
 
 def check_vc_owner():
-    async def predicate(ctx: AkariContext):
+    async def predicate(ctx: EvictContext):
         voice = await check_voice(ctx)
         owner = await check_owner(ctx)
         if voice is True or owner is True:
@@ -433,7 +433,7 @@ TICKET PREDICATES
 
 
 def get_ticket():
-    async def predicate(ctx: AkariContext):
+    async def predicate(ctx: EvictContext):
         check = await ctx.bot.db.fetchrow(
             "SELECT * FROM opened_tickets WHERE guild_id = $1 AND channel_id = $2",
             ctx.guild.id,
@@ -448,7 +448,7 @@ def get_ticket():
 
 
 def manage_ticket():
-    async def predicate(ctx: AkariContext):
+    async def predicate(ctx: EvictContext):
         check = await ctx.bot.db.fetchrow(
             "SELECT support_id FROM tickets WHERE guild_id = $1", ctx.guild.id
         )
@@ -481,7 +481,7 @@ def manage_ticket():
 
 
 def ticket_exists():
-    async def predicate(ctx: AkariContext):
+    async def predicate(ctx: EvictContext):
         check = await ctx.bot.db.fetchrow(
             "SELECT * FROM tickets WHERE guild_id = $1", ctx.guild.id
         )
@@ -502,7 +502,7 @@ MISC
 
 
 def bump_enabled():
-    async def predicate(ctx: AkariContext):
+    async def predicate(ctx: EvictContext):
         check = await ctx.bot.db.fetchrow(
             "SELECT guild_id FROM bumpreminder WHERE guild_id = $1", ctx.guild.id
         )
@@ -514,7 +514,7 @@ def bump_enabled():
 
 
 def auth_perms():
-    async def predicate(ctx: AkariContext):
+    async def predicate(ctx: EvictContext):
         if not ctx.author.id in [
             863914425445908490,
             461914901624127489,
@@ -527,7 +527,7 @@ def auth_perms():
 
 
 def is_afk():
-    async def predicate(ctx: AkariContext):
+    async def predicate(ctx: EvictContext):
         check = await ctx.bot.db.fetchrow(
             "SELECT * FROM afk WHERE guild_id = $1 AND user_id = $2",
             ctx.guild.id,
@@ -539,7 +539,7 @@ def is_afk():
 
 
 def is_there_a_reminder():
-    async def predicate(ctx: AkariContext):
+    async def predicate(ctx: EvictContext):
         check = await ctx.bot.db.fetchrow(
             "SELECT * FROM reminder WHERE guild_id = $1 AND user_id = $2",
             ctx.guild.id,
@@ -553,7 +553,7 @@ def is_there_a_reminder():
 
 
 def reminder_exists():
-    async def predicate(ctx: AkariContext):
+    async def predicate(ctx: EvictContext):
         check = await ctx.bot.db.fetchrow(
             "SELECT * FROM reminder WHERE guild_id = $1 AND user_id = $2",
             ctx.guild.id,
@@ -568,7 +568,7 @@ def reminder_exists():
 
 
 def whitelist_enabled():
-    async def predicate(ctx: AkariContext):
+    async def predicate(ctx: EvictContext):
         if not await ctx.bot.db.fetchrow(
             """
     SELECT * FROM whitelist_state

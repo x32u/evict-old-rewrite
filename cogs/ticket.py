@@ -24,27 +24,27 @@ from discord import (
     SelectOption,
 )
 
-from tools.bot import Akari
-from tools.helpers import AkariContext
+from tools.bot import Evict
+from tools.helpers import EvictContext
 from tools.persistent.tickets import TicketTopic, TicketView
 from tools.predicates import get_ticket, manage_ticket, ticket_exists
 import os
 
 
 class Ticket(Cog):
-    def __init__(self, bot: Akari):
+    def __init__(self, bot: Evict):
         self.bot = bot
         self.description = "Manage the ticket system in your server"
 
     async def make_transcript(self, c: TextChannel):
         logId = secrets.token_hex(16)
-        logs_directory = "/root/AkariLogs/logs"
+        logs_directory = "/root/evictLogs/logs"
         file = f"{logs_directory}/{str(logId)}.html"
         os.makedirs(logs_directory, exist_ok=True)
         messages = await chat_exporter.export(c)
         with open(file, "w", encoding="utf-8") as f:
             f.write(messages)
-        return f"https://logs.akari.bot/{logId}"
+        return f"https://logs.evict.bot/{logId}"
 
     @Cog.listener()
     async def on_guild_channel_delete(self, channel: GuildChannel):
@@ -62,7 +62,7 @@ class Ticket(Cog):
     @ticket.command(name="add", brief="ticket support / manage channels")
     @manage_ticket()
     @get_ticket()
-    async def ticket_add(self, ctx: AkariContext, *, member: Member):
+    async def ticket_add(self, ctx: EvictContext, *, member: Member):
         """add a person to the ticket"""
         overwrites = PermissionOverwrite()
         overwrites.send_messages = True
@@ -77,7 +77,7 @@ class Ticket(Cog):
     @ticket.command(name="remove", brief="ticket support / manage channels")
     @manage_ticket()
     @get_ticket()
-    async def ticket_remove(self, ctx: AkariContext, *, member: Member):
+    async def ticket_remove(self, ctx: EvictContext, *, member: Member):
         """remove a member from the ticket"""
         overwrites = PermissionOverwrite()
         overwrites.send_messages = False
@@ -92,7 +92,7 @@ class Ticket(Cog):
     @ticket.command(name="close", brief="ticket support / manage channels")
     @manage_ticket()
     @get_ticket()
-    async def ticket_close(self, ctx: AkariContext):
+    async def ticket_close(self, ctx: EvictContext):
         """close the ticket"""
         check = await self.bot.db.fetchrow(
             "SELECT logs FROM tickets WHERE guild_id = $1", ctx.guild.id
@@ -117,7 +117,7 @@ class Ticket(Cog):
     @ticket.command(name="reset", aliases=["disable"], brief="manage server")
     @has_guild_permissions(manage_guild=True)
     @ticket_exists()
-    async def ticket_reset(self, ctx: AkariContext):
+    async def ticket_reset(self, ctx: EvictContext):
         """disable the ticket module in the server"""
         for i in ["tickets", "ticket_topics", "opened_tickets"]:
             await self.bot.db.execute(
@@ -130,7 +130,7 @@ class Ticket(Cog):
     @manage_ticket()
     @get_ticket()
     @bot_has_guild_permissions(manage_channels=True)
-    async def ticket_rename(self, ctx: AkariContext, *, name: str):
+    async def ticket_rename(self, ctx: EvictContext, *, name: str):
         """rename a ticket channel"""
         await ctx.channel.edit(
             name=name, reason=f"Ticket channel renamed by {ctx.author}"
@@ -140,7 +140,7 @@ class Ticket(Cog):
     @ticket.command(name="support", brief="manage server")
     @has_guild_permissions(manage_guild=True)
     @ticket_exists()
-    async def ticket_support(self, ctx: AkariContext, *, role: Role = None):
+    async def ticket_support(self, ctx: EvictContext, *, role: Role = None):
         """configure the ticket support role"""
         if role:
             await self.bot.db.execute(
@@ -161,7 +161,7 @@ class Ticket(Cog):
     @has_guild_permissions(manage_guild=True)
     @ticket_exists()
     async def ticket_category(
-        self, ctx: AkariContext, *, category: CategoryChannel = None
+        self, ctx: EvictContext, *, category: CategoryChannel = None
     ):
         """configure the category where the tickets should open"""
         if category:
@@ -182,7 +182,7 @@ class Ticket(Cog):
     @ticket.command(name="logs", brief="manage server")
     @has_guild_permissions(manage_guild=True)
     @ticket_exists()
-    async def ticket_logs(self, ctx: AkariContext, *, channel: TextChannel = None):
+    async def ticket_logs(self, ctx: EvictContext, *, channel: TextChannel = None):
         """configure a channel for logging ticket transcripts"""
         if channel:
             await self.bot.db.execute(
@@ -200,7 +200,7 @@ class Ticket(Cog):
     @ticket.command(name="opened", brief="manage server")
     @has_guild_permissions(manage_guild=True)
     @ticket_exists()
-    async def ticket_opened(self, ctx: AkariContext, *, code: str = None):
+    async def ticket_opened(self, ctx: EvictContext, *, code: str = None):
         """set a message to be sent when a member opens a ticket"""
         await self.bot.db.execute(
             "UPDATE tickets SET open_embed = $1 WHERE guild_id = $2", code, ctx.guild.id
@@ -215,7 +215,7 @@ class Ticket(Cog):
     @ticket.command(brief="administrator")
     @has_guild_permissions(manage_guild=True)
     @ticket_exists()
-    async def topics(self, ctx: AkariContext):
+    async def topics(self, ctx: EvictContext):
         """manage the ticket topics"""
         results = await self.bot.db.fetch(
             "SELECT * FROM ticket_topics WHERE guild_id = $1", ctx.guild.id
@@ -270,7 +270,7 @@ class Ticket(Cog):
         await ctx.reply(embed=embed, view=view)
 
     @ticket.command(name="config", aliases=["settings"])
-    async def ticket_config(self, ctx: AkariContext):
+    async def ticket_config(self, ctx: EvictContext):
         """check the server's ticket settings"""
         check = await self.bot.db.fetchrow(
             "SELECT * FROM tickets WHERE guild_id = $1", ctx.guild.id
@@ -308,7 +308,7 @@ class Ticket(Cog):
     @ticket_exists()
     async def ticket_send(
         self,
-        ctx: AkariContext,
+        ctx: EvictContext,
         channel: TextChannel,
         *,
         code: str = "{embed}{color: #181a14}$v{title: Create a ticket}$v{description: Click on the button below this message to create a ticket}$v{author: name: {guild.name} && icon: {guild.icon}}",
@@ -322,5 +322,5 @@ class Ticket(Cog):
         return await ctx.success(f"Sent ticket panel in {channel.mention}")
 
 
-async def setup(bot: Akari) -> None:
+async def setup(bot: Evict) -> None:
     return await bot.add_cog(Ticket(bot))

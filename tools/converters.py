@@ -12,7 +12,7 @@ from discord.ext.commands import (
 )
 
 from pydantic import BaseModel
-from .helpers import AkariContext
+from .helpers import EvictContext
 
 
 class ColorSchema(BaseModel):
@@ -25,7 +25,7 @@ class ColorSchema(BaseModel):
 
 
 class AnyEmoji(Converter):
-    async def convert(self, ctx: AkariContext, argument: str):
+    async def convert(self, ctx: EvictContext, argument: str):
         if emoji.is_emoji(argument):
             return argument
 
@@ -45,7 +45,7 @@ class AnyEmoji(Converter):
 
 
 class EligibleVolume(Converter):
-    async def convert(self, ctx: AkariContext, argument: str):
+    async def convert(self, ctx: EvictContext, argument: str):
         try:
             volume = int(argument)
         except ValueError:
@@ -58,7 +58,7 @@ class EligibleVolume(Converter):
 
 
 class HexColor(Converter):
-    async def convert(self, ctx: AkariContext, argument: str) -> ColorSchema:
+    async def convert(self, ctx: EvictContext, argument: str) -> ColorSchema:
         if argument in ["pfp", "avatar"]:
             dominant = await ctx.bot.dominant_color(ctx.author.display_avatar)
             payload = {"hex": hex(dominant).replace("0x", "#"), "value": dominant}
@@ -78,7 +78,7 @@ class HexColor(Converter):
 
 
 class AbleToMarry(MemberConverter):
-    async def convert(self, ctx: AkariContext, argument: str):
+    async def convert(self, ctx: EvictContext, argument: str):
         try:
             member = await super().convert(ctx, argument)
         except BadArgument:
@@ -106,7 +106,7 @@ class AbleToMarry(MemberConverter):
 
 
 class NoStaff(MemberConverter):
-    async def convert(self, ctx: AkariContext, argument: str):
+    async def convert(self, ctx: EvictContext, argument: str):
         try:
             member = await super().convert(ctx, argument)
         except BadArgument:
@@ -134,7 +134,7 @@ class NoStaff(MemberConverter):
 
 
 class LevelMember(MemberConverter):
-    async def convert(self, ctx: AkariContext, argument: str):
+    async def convert(self, ctx: EvictContext, argument: str):
         try:
             member = await super().convert(ctx, argument)
         except BadArgument:
@@ -154,7 +154,7 @@ class LevelMember(MemberConverter):
 
 
 class CounterMessage(Converter):
-    async def convert(self, ctx: AkariContext, argument: str):
+    async def convert(self, ctx: EvictContext, argument: str):
         if not "{target}" in argument:
             raise BadArgument("{target} variable is **missing** from the channel name")
 
@@ -162,7 +162,7 @@ class CounterMessage(Converter):
 
 
 class ChannelType(Converter):
-    async def convert(self, ctx: AkariContext, argument: str):
+    async def convert(self, ctx: EvictContext, argument: str):
         if not argument in ["voice", "stage", "text", "category"]:
             raise BadArgument(f"**{argument}** is not a **valid** channel type")
 
@@ -170,7 +170,7 @@ class ChannelType(Converter):
 
 
 class CounterType(Converter):
-    async def convert(self, ctx: AkariContext, argument: str):
+    async def convert(self, ctx: EvictContext, argument: str):
         if not argument in ["members", "voice", "boosters", "humans", "bots"]:
             raise BadArgument(f"**{argument}** is not an **available** counter")
 
@@ -178,7 +178,7 @@ class CounterType(Converter):
 
 
 class NewRoleConverter(RoleConverter):
-    async def convert(self, ctx: AkariContext, argument: str):
+    async def convert(self, ctx: EvictContext, argument: str):
         try:
             role = await super().convert(ctx, argument)
         except BadArgument:
@@ -207,7 +207,7 @@ class NewRoleConverter(RoleConverter):
 
 
 class EligibleEconomyMember(MemberConverter):
-    async def convert(self, ctx: AkariContext, argument: str):
+    async def convert(self, ctx: EvictContext, argument: str):
         try:
             member = await super().convert(ctx, argument)
         except BadArgument:
@@ -227,7 +227,7 @@ class EligibleEconomyMember(MemberConverter):
 
 
 class CardAmount(Converter):
-    async def convert(self, ctx: AkariContext, argument: str):
+    async def convert(self, ctx: EvictContext, argument: str):
         check = await ctx.bot.db.fetchrow(
             "SELECT card FROM economy WHERE user_id = $1", ctx.author.id
         )
@@ -257,7 +257,7 @@ class CardAmount(Converter):
 
 
 class CashAmount(Converter):
-    async def convert(self, ctx: AkariContext, argument: str):
+    async def convert(self, ctx: EvictContext, argument: str):
         cash = await ctx.bot.db.fetchval(
             "SELECT cash FROM economy WHERE user_id = $1", ctx.author.id
         )
@@ -289,7 +289,7 @@ class CashAmount(Converter):
 
 
 class Punishment(Converter):
-    async def convert(self, ctx: AkariContext, argument: str):
+    async def convert(self, ctx: EvictContext, argument: str):
         if not argument in ["ban", "kick", "strip"]:
             raise BadArgument(
                 f"**{argument}** is **not** a valid punishment\nThe valid ones are: ban, kick and strip"

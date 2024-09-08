@@ -34,8 +34,8 @@ from typing import Union, Optional, Literal
 from collections import defaultdict
 from humanfriendly import format_timespan
 
-from tools.bot import Akari
-from tools.helpers import AkariContext, Invoking
+from tools.bot import Evict
+from tools.helpers import EvictContext, Invoking
 from tools.converters import NoStaff, NewRoleConverter, HexColor
 from tools.validators import ValidTime, ValidNickname, ValidMessage
 from tools.predicates import is_jail, admin_antinuke
@@ -43,7 +43,7 @@ from tools.misc.views import BoosterMod
 
 
 class Moderation(Cog):
-    def __init__(self, bot: Akari):
+    def __init__(self, bot: Evict):
         self.bot = bot
         self.description = "Moderation commands"
         self.locks = defaultdict(asyncio.Lock)
@@ -172,7 +172,7 @@ class Moderation(Cog):
     @hybrid_command(brief="manage roles")
     @has_guild_permissions(manage_roles=True)
     @bot_has_guild_permissions(manage_roles=True)
-    async def restore(self, ctx: AkariContext, *, member: NoStaff):
+    async def restore(self, ctx: EvictContext, *, member: NoStaff):
         """
         give a member their roles back after rejoining
         """
@@ -218,7 +218,7 @@ class Moderation(Cog):
     @command(brief="administrator")
     @has_guild_permissions(administrator=True)
     @bot_has_guild_permissions(manage_channels=True, manage_roles=True)
-    async def setjail(self, ctx: AkariContext):
+    async def setjail(self, ctx: EvictContext):
         """
         Set up jail module
         """
@@ -248,7 +248,7 @@ class Moderation(Cog):
                 }
 
                 text = await ctx.guild.create_text_channel(
-                    name="jail-Akari",
+                    name="jail-evict",
                     overwrites=overwrite,
                     reason="creating jail channel",
                 )
@@ -273,7 +273,7 @@ class Moderation(Cog):
     @has_guild_permissions(administrator=True)
     @bot_has_guild_permissions(manage_channels=True, manage_roles=True)
     @is_jail()
-    async def unsetjail(self, ctx: AkariContext):
+    async def unsetjail(self, ctx: EvictContext):
         """
         disable the jail module
         """
@@ -323,7 +323,7 @@ class Moderation(Cog):
     @is_jail()
     async def jail(
         self,
-        ctx: AkariContext,
+        ctx: EvictContext,
         member: NoStaff,
         *,
         reason: str = "No reason provided",
@@ -379,7 +379,7 @@ class Moderation(Cog):
     @bot_has_guild_permissions(manage_roles=True)
     @is_jail()
     async def unjail(
-        self, ctx: AkariContext, member: Member, *, reason: str = "No reason provided"
+        self, ctx: EvictContext, member: Member, *, reason: str = "No reason provided"
     ):
         """
         lift the jail restriction from a member
@@ -419,7 +419,7 @@ class Moderation(Cog):
             return await ctx.success(f"Unjailed {member.mention} - {reason}")
 
     @command()
-    async def jailed(self, ctx: AkariContext):
+    async def jailed(self, ctx: EvictContext):
         """
         returns the jailed members
         """
@@ -445,7 +445,7 @@ class Moderation(Cog):
     @hybrid_command(brief="mute members")
     @has_guild_permissions(mute_members=True)
     @bot_has_guild_permissions(mute_members=True)
-    async def voicemute(self, ctx: AkariContext, *, member: NoStaff):
+    async def voicemute(self, ctx: EvictContext, *, member: NoStaff):
         """
         Voice mute a member
         """
@@ -463,7 +463,7 @@ class Moderation(Cog):
     @hybrid_command(brief="mute members")
     @has_guild_permissions(mute_members=True)
     @bot_has_guild_permissions(mute_members=True)
-    async def voiceunmute(self, ctx: AkariContext, *, member: NoStaff):
+    async def voiceunmute(self, ctx: EvictContext, *, member: NoStaff):
         """
         Voice unmute a member
         """
@@ -478,7 +478,7 @@ class Moderation(Cog):
     @hybrid_command(brief="deafen members")
     @has_guild_permissions(deafen_members=True)
     @bot_has_guild_permissions(deafen_members=True)
-    async def voicedeafen(self, ctx: AkariContext, *, member: NoStaff):
+    async def voicedeafen(self, ctx: EvictContext, *, member: NoStaff):
         """
         Deafen a member in a voice channel
         """
@@ -496,7 +496,7 @@ class Moderation(Cog):
     @hybrid_command(brief="deafen members")
     @has_guild_permissions(deafen_members=True)
     @bot_has_guild_permissions(deafen_members=True)
-    async def voiceundeafen(self, ctx: AkariContext, *, member: NoStaff):
+    async def voiceundeafen(self, ctx: EvictContext, *, member: NoStaff):
         """
         Voice undeafen a member
         """
@@ -515,7 +515,7 @@ class Moderation(Cog):
     @idk_clear.command(name="invites", brief="manage messages")
     @has_guild_permissions(manage_messages=True)
     @bot_has_guild_permissions(manage_messages=True)
-    async def clear_invites(self, ctx: AkariContext):
+    async def clear_invites(self, ctx: EvictContext):
         """
         clear messages that contain discord invite links
         """
@@ -526,7 +526,7 @@ class Moderation(Cog):
     @idk_clear.command(brief="manage messages")
     @has_guild_permissions(manage_messages=True)
     @bot_has_guild_permissions(manage_messages=True)
-    async def contains(self, ctx: AkariContext, *, word: str):
+    async def contains(self, ctx: EvictContext, *, word: str):
         """
         clear messages that contain a certain word
         """
@@ -536,7 +536,7 @@ class Moderation(Cog):
     @idk_clear.command(name="images", brief="manage messages")
     @has_guild_permissions(manage_messages=True)
     @bot_has_guild_permissions(manage_messages=True)
-    async def clear_images(self, ctx: AkariContext):
+    async def clear_images(self, ctx: EvictContext):
         """
         clear messages that have attachments
         """
@@ -546,7 +546,7 @@ class Moderation(Cog):
     @command(brief="manage messages")
     @has_guild_permissions(manage_messages=True)
     @bot_has_guild_permissions(manage_messages=True)
-    async def purge(self, ctx: AkariContext, number: int, *, member: Member = None):
+    async def purge(self, ctx: EvictContext, number: int, *, member: Member = None):
         """
         delete more messages at once
         """
@@ -565,7 +565,7 @@ class Moderation(Cog):
     @command(brief="manage messages", aliases=["bc", "bp", "botpurge"])
     @has_guild_permissions(manage_messages=True)
     @bot_has_guild_permissions(manage_messages=True)
-    async def botclear(self, ctx: AkariContext):
+    async def botclear(self, ctx: EvictContext):
         """
         delete messages sent by bots
         """
@@ -580,7 +580,7 @@ class Moderation(Cog):
     @hybrid_command(brief="manage channels")
     @has_guild_permissions(manage_channels=True)
     @bot_has_guild_permissions(manage_channels=True)
-    async def lock(self, ctx: AkariContext, *, channel: TextChannel = CurrentChannel):
+    async def lock(self, ctx: EvictContext, *, channel: TextChannel = CurrentChannel):
         """
         lock a channel
         """
@@ -600,7 +600,7 @@ class Moderation(Cog):
     @hybrid_command(brief="manage channels")
     @has_guild_permissions(manage_channels=True)
     @bot_has_guild_permissions(manage_channels=True)
-    async def unlock(self, ctx: AkariContext, *, channel: TextChannel = CurrentChannel):
+    async def unlock(self, ctx: EvictContext, *, channel: TextChannel = CurrentChannel):
         """
         unlock a channel
         """
@@ -625,7 +625,7 @@ class Moderation(Cog):
     @bot_has_guild_permissions(manage_channels=True)
     async def slowmode(
         self,
-        ctx: AkariContext,
+        ctx: EvictContext,
         time: ValidTime,
         *,
         channel: TextChannel = CurrentChannel,
@@ -646,7 +646,7 @@ class Moderation(Cog):
     @bot_has_guild_permissions(moderate_members=True)
     async def mute(
         self,
-        ctx: AkariContext,
+        ctx: EvictContext,
         member: NoStaff,
         time: ValidTime = 3600,
         *,
@@ -676,7 +676,7 @@ class Moderation(Cog):
     @bot_has_guild_permissions(moderate_members=True)
     async def unmute(
         self,
-        ctx: AkariContext,
+        ctx: EvictContext,
         member: NoStaff,
         *,
         reason: str = "No reason provided",
@@ -697,7 +697,7 @@ class Moderation(Cog):
     @bot_has_guild_permissions(ban_members=True)
     async def ban(
         self,
-        ctx: AkariContext,
+        ctx: EvictContext,
         member: Union[Member, User],
         delete_days: Optional[Literal[0, 1, 7]] = 0,
         *,
@@ -728,7 +728,7 @@ class Moderation(Cog):
     @bot_has_guild_permissions(kick_members=True)
     async def kick(
         self,
-        ctx: AkariContext,
+        ctx: EvictContext,
         member: NoStaff,
         *,
         reason: str = "No reason provided",
@@ -753,21 +753,21 @@ class Moderation(Cog):
     @command(brief="ban members")
     @admin_antinuke()
     @bot_has_guild_permissions(ban_members=True)
-    async def unbanall(self, ctx: AkariContext):
+    async def unbanall(self, ctx: EvictContext):
         """
         unban all members from the server
         """
 
         async with self.locks[ctx.guild.id]:
             bans = [m.user async for m in ctx.guild.bans()]
-            await ctx.akari_send(f"Unbanning **{len(bans)}** members..")
+            await ctx.evict_send(f"Unbanning **{len(bans)}** members..")
             await asyncio.gather(*[ctx.guild.unban(Object(m.id)) for m in bans])
 
     @command(brief="ban members")
     @has_guild_permissions(ban_members=True)
     @bot_has_guild_permissions(ban_members=True)
     async def unban(
-        self, ctx: AkariContext, member: User, *, reason: str = "No reason provided"
+        self, ctx: EvictContext, member: User, *, reason: str = "No reason provided"
     ):
         """
         unban a member from the server
@@ -783,7 +783,7 @@ class Moderation(Cog):
     @hybrid_command(brief="manage roles")
     @has_guild_permissions(manage_roles=True)
     @bot_has_guild_permissions(manage_roles=True)
-    async def strip(self, ctx: AkariContext, *, member: NoStaff):
+    async def strip(self, ctx: EvictContext, *, member: NoStaff):
         """
         remove someone's dangerous roles
         """
@@ -803,7 +803,7 @@ class Moderation(Cog):
     @has_guild_permissions(manage_nicknames=True)
     @bot_has_guild_permissions(manage_nicknames=True)
     async def nickname(
-        self, ctx: AkariContext, member: NoStaff, *, nick: ValidNickname
+        self, ctx: EvictContext, member: NoStaff, *, nick: ValidNickname
     ):
         """
         change a member's nickname
@@ -820,7 +820,7 @@ class Moderation(Cog):
     @has_guild_permissions(manage_messages=True)
     async def warn(
         self,
-        ctx: AkariContext,
+        ctx: EvictContext,
         member: NoStaff = None,
         *,
         reason: str = "No reason provided",
@@ -844,7 +844,7 @@ class Moderation(Cog):
 
     @warn.command(name="clear", brief="manage messages")
     @has_guild_permissions(manage_messages=True)
-    async def warn_clear(self, ctx: AkariContext, *, member: NoStaff):
+    async def warn_clear(self, ctx: EvictContext, *, member: NoStaff):
         """
         clear all warns from an user
         """
@@ -871,7 +871,7 @@ class Moderation(Cog):
 
     @warn.command(name="list")
     @has_guild_permissions(manage_messages=True)
-    async def warn_list(self, ctx: AkariContext, *, member: Member):
+    async def warn_list(self, ctx: EvictContext, *, member: Member):
         """
         returns all warns that an user has
         """
@@ -899,7 +899,7 @@ class Moderation(Cog):
         )
 
     @command()
-    async def warns(self, ctx: AkariContext, *, member: Member):
+    async def warns(self, ctx: EvictContext, *, member: Member):
         """
         shows all warns of an user
         """
@@ -909,7 +909,7 @@ class Moderation(Cog):
     @command(brief="server owner")
     @admin_antinuke()
     @bot_has_guild_permissions(manage_channels=True)
-    async def nuke(self, ctx: AkariContext):
+    async def nuke(self, ctx: EvictContext):
         """
         replace the current channel with a new one
         """
@@ -983,7 +983,7 @@ class Moderation(Cog):
     @command(brief="manage_roles")
     @has_guild_permissions(manage_roles=True)
     @bot_has_guild_permissions(manage_roles=True)
-    async def roleall(self, ctx: AkariContext, *, role: NewRoleConverter):
+    async def roleall(self, ctx: EvictContext, *, role: NewRoleConverter):
         """
         add a role to all members
         """
@@ -998,7 +998,7 @@ class Moderation(Cog):
             if len(tasks) == 0:
                 return await ctx.warning("Everyone has this role")
 
-            mes = await ctx.akari_send(
+            mes = await ctx.evict_send(
                 f"Giving {role.mention} to **{len(tasks)}** members. This operation might take around **{format_timespan(0.3*len(tasks))}**"
             )
 
@@ -1013,7 +1013,7 @@ class Moderation(Cog):
     @group(brief="manage_roles", aliases=["r"], invoke_without_command=True)
     @has_guild_permissions(manage_roles=True)
     @bot_has_guild_permissions(manage_roles=True)
-    async def role(self, ctx: AkariContext, member: Member, *, role_string: str):
+    async def role(self, ctx: EvictContext, member: Member, *, role_string: str):
         """
         add roles to a member
         """
@@ -1058,7 +1058,7 @@ class Moderation(Cog):
     @has_guild_permissions(manage_roles=True)
     @bot_has_guild_permissions(manage_roles=True)
     async def role_create(
-        self, ctx: AkariContext, color: Optional[HexColor] = 0, *, name: str
+        self, ctx: EvictContext, color: Optional[HexColor] = 0, *, name: str
     ):
         """
         create a role
@@ -1072,7 +1072,7 @@ class Moderation(Cog):
     @role.command(name="delete", aliases=["del", "remove"], brief="manage_roles")
     @has_guild_permissions(manage_roles=True)
     @bot_has_guild_permissions(manage_roles=True)
-    async def role_delete(self, ctx: AkariContext, *, role: NewRoleConverter):
+    async def role_delete(self, ctx: EvictContext, *, role: NewRoleConverter):
         """
         delete a role
         """
@@ -1107,7 +1107,7 @@ class Moderation(Cog):
     @role.command(name="all", brief="manage roles")
     @has_guild_permissions(manage_roles=True)
     @bot_has_guild_permissions(manage_roles=True)
-    async def role_all(self, ctx: AkariContext, *, role: NewRoleConverter):
+    async def role_all(self, ctx: EvictContext, *, role: NewRoleConverter):
         """
         add a role to all members
         """
@@ -1117,7 +1117,7 @@ class Moderation(Cog):
     @group(name="channel", brief="manage channels", invoke_without_command=True)
     @has_guild_permissions(manage_channels=True)
     @bot_has_guild_permissions(manage_channels=True)
-    async def channel(self, ctx: AkariContext):
+    async def channel(self, ctx: EvictContext):
         """
         Manage channels in your sever
         """
@@ -1127,7 +1127,7 @@ class Moderation(Cog):
     @channel.command(name="create", aliases=["make"], brief="manage channels")
     @has_guild_permissions(manage_channels=True)
     @bot_has_guild_permissions(manage_channels=True)
-    async def channel_create(self, ctx: AkariContext, *, name: str):
+    async def channel_create(self, ctx: EvictContext, *, name: str):
         """
         Create a channel in your server
         """
@@ -1138,7 +1138,7 @@ class Moderation(Cog):
     @channel.command(name="remove", aliases=["delete", "del"], brief="manage channels")
     @has_guild_permissions(manage_channels=True)
     @bot_has_guild_permissions(manage_channels=True)
-    async def channel_remove(self, ctx: AkariContext, *, channel: TextChannel):
+    async def channel_remove(self, ctx: EvictContext, *, channel: TextChannel):
         """
         Delete a channel in your server
         """
@@ -1154,7 +1154,7 @@ class Moderation(Cog):
     @has_guild_permissions(manage_channels=True)
     @bot_has_guild_permissions(manage_channels=True)
     async def channel_rename(
-        self, ctx: AkariContext, channel: Optional[TextChannel] = None, *, name: str
+        self, ctx: EvictContext, channel: Optional[TextChannel] = None, *, name: str
     ):
         """
         Rename a channel
@@ -1180,7 +1180,7 @@ class Moderation(Cog):
     @has_guild_permissions(manage_channels=True)
     @bot_has_guild_permissions(manage_channels=True)
     async def channel_category(
-        self, ctx: AkariContext, channel: TextChannel, *, category: CategoryChannel
+        self, ctx: EvictContext, channel: TextChannel, *, category: CategoryChannel
     ):
         """
         Move a channel to a new category
@@ -1196,7 +1196,7 @@ class Moderation(Cog):
     @channel.command(name="nsfw", aliases=["naughty"], brief="manage channels")
     @has_guild_permissions(manage_channels=True)
     @bot_has_guild_permissions(manage_channels=True)
-    async def channel_nsfw(self, ctx: AkariContext, *, channel: TextChannel):
+    async def channel_nsfw(self, ctx: EvictContext, *, channel: TextChannel):
         """
         Toggle NSFW for a channel
         """
@@ -1212,7 +1212,7 @@ class Moderation(Cog):
     @has_guild_permissions(manage_channels=True)
     @bot_has_guild_permissions(manage_channels=True)
     async def channel_topic(
-        self, ctx: AkariContext, channel: Optional[TextChannel] = None, *, topic: str
+        self, ctx: EvictContext, channel: Optional[TextChannel] = None, *, topic: str
     ):
         """
         Change a channel's topic
@@ -1234,7 +1234,7 @@ class Moderation(Cog):
 
     @group(name="category", brief="manage channels", invoke_without_command=True)
     @has_guild_permissions(manage_channels=True)
-    async def category(self, ctx: AkariContext):
+    async def category(self, ctx: EvictContext):
         """
         Manage categories in your server
         """
@@ -1243,7 +1243,7 @@ class Moderation(Cog):
 
     @category.command(name="create", brief="manage channels")
     @has_guild_permissions(manage_channels=True)
-    async def category_create(self, ctx: AkariContext, *, name: str):
+    async def category_create(self, ctx: EvictContext, *, name: str):
         """
         Create a category in your server
         """
@@ -1254,7 +1254,7 @@ class Moderation(Cog):
 
     @category.command(name="delete", brief="manage channels")
     @has_guild_permissions(manage_channels=True)
-    async def category_delete(self, ctx: AkariContext, *, category: CategoryChannel):
+    async def category_delete(self, ctx: EvictContext, *, category: CategoryChannel):
         """
         Delete a category in your server
         """
@@ -1285,7 +1285,7 @@ class Moderation(Cog):
     @category.command(name="rename", brief="manage channels")
     @has_guild_permissions(manage_channels=True)
     async def category_rename(
-        self, ctx: AkariContext, category: CategoryChannel, *, name: str
+        self, ctx: EvictContext, category: CategoryChannel, *, name: str
     ):
         """
         Rename a category in your server
@@ -1299,7 +1299,7 @@ class Moderation(Cog):
 
     @category.command(name="duplicate", aliases=["clone", "remake"])
     @has_guild_permissions(manage_channels=True)
-    async def category_duplicate(self, ctx: AkariContext, *, category: CategoryChannel):
+    async def category_duplicate(self, ctx: EvictContext, *, category: CategoryChannel):
         """
         Clone an already existing category in your server
         """
@@ -1313,7 +1313,7 @@ class Moderation(Cog):
     @command(name="pin", brief="manage messages")
     @has_guild_permissions(manage_messages=True)
     @bot_has_guild_permissions(manage_messages=True)
-    async def pin(self, ctx: AkariContext, message: ValidMessage = None):
+    async def pin(self, ctx: EvictContext, message: ValidMessage = None):
         """
         Pin a message
         """
@@ -1341,7 +1341,7 @@ class Moderation(Cog):
     @command(name="unpin", brief="manage messages")
     @has_guild_permissions(manage_messages=True)
     @bot_has_guild_permissions(manage_messages=True)
-    async def unpin(self, ctx: AkariContext, message: ValidMessage = None):
+    async def unpin(self, ctx: EvictContext, message: ValidMessage = None):
         """
         Unpin a message
         """
@@ -1364,7 +1364,7 @@ class Moderation(Cog):
     @group(name="thread", brief="manage threads", invoke_without_command=True)
     @has_guild_permissions(manage_threads=True)
     @bot_has_guild_permissions(manage_threads=True)
-    async def thread(self, ctx: AkariContext):
+    async def thread(self, ctx: EvictContext):
         """
         Manage threads
         """
@@ -1374,7 +1374,7 @@ class Moderation(Cog):
     @thread.command(name="lock", brief="manage threads")
     @has_guild_permissions(manage_threads=True)
     @bot_has_guild_permissions(manage_threads=True)
-    async def thread_lock(self, ctx: AkariContext, thread: Thread = None):
+    async def thread_lock(self, ctx: EvictContext, thread: Thread = None):
         """
         Lock a thread
         """
@@ -1395,7 +1395,7 @@ class Moderation(Cog):
     @thread.command(name="unlock", brief="manage threads")
     @has_guild_permissions(manage_threads=True)
     @bot_has_guild_permissions(manage_threads=True)
-    async def thread_unlock(self, ctx: AkariContext, thread: Thread = None):
+    async def thread_unlock(self, ctx: EvictContext, thread: Thread = None):
         """
         Unlock a locked thread
         """
@@ -1417,7 +1417,7 @@ class Moderation(Cog):
     @has_guild_permissions(manage_threads=True)
     @bot_has_guild_permissions(manage_threads=True)
     async def thread_rename(
-        self, ctx: AkariContext, thread: Optional[Thread] = None, *, name: str
+        self, ctx: EvictContext, thread: Optional[Thread] = None, *, name: str
     ):
         """
         Rename a thread
@@ -1438,7 +1438,7 @@ class Moderation(Cog):
     @has_guild_permissions(create_public_threads=True)
     @bot_has_guild_permissions(create_public_threads=True)
     async def thread_create(
-        self, ctx: AkariContext, message: Optional[ValidMessage] = None, *, name: str
+        self, ctx: EvictContext, message: Optional[ValidMessage] = None, *, name: str
     ):
         """
         create a thread
@@ -1462,7 +1462,7 @@ class Moderation(Cog):
     @thread.command(name="delete", aliases=["del"], brief="manage threads")
     @has_guild_permissions(manage_threads=True)
     @bot_has_guild_permissions(manage_threads=True)
-    async def thread_delete(self, ctx: AkariContext, thread: Optional[Thread] = None):
+    async def thread_delete(self, ctx: EvictContext, thread: Optional[Thread] = None):
         """
         delete a thread
         """
@@ -1493,12 +1493,12 @@ class Moderation(Cog):
         )
 
         async def no_func(interaction: Interaction):
-            return await ctx.akari_send(f"Cancelling action...")
+            return await ctx.evict_send(f"Cancelling action...")
 
     @command(name="reactionmute", aliases=["rmute"], brief="manage messages")
     @has_guild_permissions(manage_messages=True)
     @bot_has_guild_permissions(manage_channels=True)
-    async def reactionmute(self, ctx: AkariContext, member: NoStaff):
+    async def reactionmute(self, ctx: EvictContext, member: NoStaff):
         """
         Revoke a member's reaction permissions
         """
@@ -1521,7 +1521,7 @@ class Moderation(Cog):
     @command(name="reactionunmute", aliases=["runmute"], brief="manage messages")
     @has_guild_permissions(manage_messages=True)
     @bot_has_guild_permissions(manage_channels=True)
-    async def reactionunmute(self, ctx: AkariContext, member: NoStaff):
+    async def reactionunmute(self, ctx: EvictContext, member: NoStaff):
         """
         Grant a reaction muted member reaction permissions
         """
@@ -1550,7 +1550,7 @@ class Moderation(Cog):
     @admin_antinuke()
     async def hardban(
         self,
-        ctx: AkariContext,
+        ctx: EvictContext,
         member: NoStaff | User,
         *,
         reason: str = "No reason provided",
@@ -1601,7 +1601,7 @@ class Moderation(Cog):
     @bot_has_guild_permissions(ban_members=True)
     @admin_antinuke()
     async def unhardban(
-        self, ctx: AkariContext, user: User, *, reason: str = "No reason provided"
+        self, ctx: EvictContext, user: User, *, reason: str = "No reason provided"
     ):
         """
         Unhardban a hardbanned member
@@ -1652,7 +1652,7 @@ class Moderation(Cog):
     @has_guild_permissions(manage_messages=True)
     async def revokefiles(
         self,
-        ctx: AkariContext,
+        ctx: EvictContext,
         state: str,
         member: NoStaff,
         *,
@@ -1688,7 +1688,7 @@ class Moderation(Cog):
 
     @group(name="notes", aliases=["note"], invoke_without_command=True)
     @has_guild_permissions(manage_messages=True)
-    async def notes(self, ctx: AkariContext, member: Member | User):
+    async def notes(self, ctx: EvictContext, member: Member | User):
         """
         view a member's notes
         """
@@ -1719,7 +1719,7 @@ class Moderation(Cog):
 
     @notes.command(name="add")
     @has_guild_permissions(manage_messages=True)
-    async def notes_add(self, ctx: AkariContext, member: Member, *, note: str):
+    async def notes_add(self, ctx: EvictContext, member: Member, *, note: str):
         """
         add a note for a member
         """
@@ -1750,7 +1750,7 @@ class Moderation(Cog):
 
     @notes.command(name="remove", aliases=["rm", "del", "delete"])
     @has_guild_permissions(manage_messages=True)
-    async def notes_remove(self, ctx: AkariContext, member: Member, *, note: str):
+    async def notes_remove(self, ctx: EvictContext, member: Member, *, note: str):
         """
         remove a note from a member
         """
@@ -1792,5 +1792,5 @@ class Moderation(Cog):
         await ctx.success(f"Removed note from **{member}**")
 
 
-async def setup(bot: Akari) -> None:
+async def setup(bot: Evict) -> None:
     await bot.add_cog(Moderation(bot))

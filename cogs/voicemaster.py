@@ -2,8 +2,8 @@ import asyncio
 
 from collections import defaultdict
 
-from tools.bot import Akari
-from tools.helpers import AkariContext
+from tools.bot import Evict
+from tools.helpers import EvictContext
 from tools.handlers.embedbuilder import EmbedBuilder
 from tools.persistent.vm import VoiceMasterView, ButtonScript
 from tools.predicates import is_vm, check_vc_owner, rename_cooldown
@@ -26,7 +26,7 @@ from discord.ext.commands import (
 
 
 class Voicemaster(Cog):
-    def __init__(self, bot: Akari):
+    def __init__(self, bot: Evict):
         self.bot = bot
         self.description = "VoiceMaster commands"
         self.locks = defaultdict(asyncio.Lock)
@@ -188,7 +188,7 @@ class Voicemaster(Cog):
                     await self.delete_temporary_channel(before.channel)
 
     @hybrid_group(invoke_without_command=True, aliases=["vm"])
-    async def voicemaster(self, ctx: AkariContext):
+    async def voicemaster(self, ctx: EvictContext):
         """
         Create custom voice channels
         """
@@ -199,7 +199,7 @@ class Voicemaster(Cog):
     @has_guild_permissions(administrator=True)
     @bot_has_guild_permissions(manage_channels=True)
     @is_vm()
-    async def vm_setup(self, ctx: AkariContext):
+    async def vm_setup(self, ctx: EvictContext):
         """
         Configure the voicemaster module
         """
@@ -237,7 +237,7 @@ class Voicemaster(Cog):
             )
             embed.set_author(name=ctx.guild.name, icon_url=ctx.guild.icon)
             embed.set_thumbnail(url=self.bot.user.display_avatar.url)
-            embed.set_footer(text="The Akari Team")
+            embed.set_footer(text="The evict Team")
             embed.add_field(
                 name="usage", value="\n".join(f"{x[0]} - {x[1]}" for x in self.values)
             )
@@ -263,7 +263,7 @@ class Voicemaster(Cog):
     @voicemaster.command(name="unsetup", brief="administrator")
     @has_guild_permissions(administrator=True)
     @bot_has_guild_permissions(manage_channels=True)
-    async def vm_unsetup(self, ctx: AkariContext):
+    async def vm_unsetup(self, ctx: EvictContext):
         """
         Remove the voicemaster module
         """
@@ -308,7 +308,7 @@ class Voicemaster(Cog):
 
     @command(brief="administrator")
     @has_guild_permissions(administrator=True)
-    async def interface(self, ctx: AkariContext, *, code: str = None):
+    async def interface(self, ctx: EvictContext, *, code: str = None):
         """
         Create a custom voice master interface
         """
@@ -326,7 +326,7 @@ class Voicemaster(Cog):
                 )
                 .set_author(name=ctx.guild.name, icon_url=ctx.guild.icon)
                 .set_thumbnail(url=self.bot.user.display_avatar.url)
-                .set_footer(text="The Akari Team")
+                .set_footer(text="The evict Team")
                 .add_field(
                     name="usage",
                     value="\n".join(f"{x[0]} - {x[1]}" for x in self.values),
@@ -358,7 +358,7 @@ class Voicemaster(Cog):
     @voice.command(brief="vc owner")
     @check_vc_owner()
     @bot_has_guild_permissions(manage_channels=True)
-    async def lock(self, ctx: AkariContext):
+    async def lock(self, ctx: EvictContext):
         """
         Lock the voice channel
         """
@@ -375,7 +375,7 @@ class Voicemaster(Cog):
     @voice.command(help="config", brief="vc owner")
     @check_vc_owner()
     @bot_has_guild_permissions(manage_channels=True)
-    async def unlock(self, ctx: AkariContext):
+    async def unlock(self, ctx: EvictContext):
         """
         Unlock the voice channel
         """
@@ -393,7 +393,7 @@ class Voicemaster(Cog):
     @check_vc_owner()
     @rename_cooldown()
     @bot_has_guild_permissions(manage_channels=True)
-    async def rename(self, ctx: AkariContext, *, name: str):
+    async def rename(self, ctx: EvictContext, *, name: str):
         """
         Rename the voice channel
         """
@@ -404,7 +404,7 @@ class Voicemaster(Cog):
     @voice.command(brief="vc owner")
     @check_vc_owner()
     @bot_has_guild_permissions(manage_channels=True)
-    async def hide(self, ctx: AkariContext):
+    async def hide(self, ctx: EvictContext):
         """
         Hide the voice channel
         """
@@ -421,7 +421,7 @@ class Voicemaster(Cog):
     @voice.command(brief="vc owner")
     @check_vc_owner()
     @bot_has_guild_permissions(manage_channels=True)
-    async def reveal(self, ctx: AkariContext):
+    async def reveal(self, ctx: EvictContext):
         """
         Reveal the voice channel
         """
@@ -438,7 +438,7 @@ class Voicemaster(Cog):
     @voice.command(brief="vc owner")
     @check_vc_owner()
     @bot_has_guild_permissions(manage_channels=True)
-    async def permit(self, ctx: AkariContext, *, member: Member):
+    async def permit(self, ctx: EvictContext, *, member: Member):
         """
         let someone join your locked voice channel
         """
@@ -451,7 +451,7 @@ class Voicemaster(Cog):
     @voice.command(brief="vc owner")
     @check_vc_owner()
     @bot_has_guild_permissions(manage_channels=True)
-    async def reject(self, ctx: AkariContext, *, member: Member):
+    async def reject(self, ctx: EvictContext, *, member: Member):
         """
         Restrict someone from joining your voice channel
         """
@@ -470,7 +470,7 @@ class Voicemaster(Cog):
     @voice.command(brief="vc owner")
     @check_vc_owner()
     @bot_has_guild_permissions(manage_channels=True)
-    async def kick(self, ctx: AkariContext, *, member: Member):
+    async def kick(self, ctx: EvictContext, *, member: Member):
         """
         Kick a membert from your voice channel
         """
@@ -487,7 +487,7 @@ class Voicemaster(Cog):
         )
 
     @voice.command(help="config")
-    async def claim(self, ctx: AkariContext):
+    async def claim(self, ctx: EvictContext):
         """
         Claim the voice channel ownership
         """
@@ -519,7 +519,7 @@ class Voicemaster(Cog):
 
     @voice.command(brief="vc owner")
     @check_vc_owner()
-    async def transfer(self, ctx: AkariContext, *, member: Member):
+    async def transfer(self, ctx: EvictContext, *, member: Member):
         """
         Transfer the voice channel ownership to another member
         """
@@ -541,7 +541,7 @@ class Voicemaster(Cog):
 
     @voice.command(name="status", brief="vc owner")
     @check_vc_owner()
-    async def voice_status(self, ctx: AkariContext, *, status: str):
+    async def voice_status(self, ctx: EvictContext, *, status: str):
         """
         set your voice channel status
         """

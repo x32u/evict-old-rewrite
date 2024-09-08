@@ -7,7 +7,7 @@ from discord.ext import commands
 from collections import defaultdict
 from typing import List, Optional, Union
 
-from tools.helpers import AkariContext as Context
+from tools.helpers import EvictContext as Context
 
 
 class UserID(discord.ui.Button):
@@ -58,7 +58,7 @@ class LogsView(discord.ui.View):
         super().__init__(timeout=None)
         self.add_item(UserID(id_name))
         self.add_item(
-            discord.ui.Button(label="Support Server", url="https://discord.gg/akaribot")
+            discord.ui.Button(label="Support Server", url="https://discord.gg/evict")
         )
 
 

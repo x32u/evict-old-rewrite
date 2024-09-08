@@ -9,11 +9,11 @@ from discord import User, Member
 
 from collections import defaultdict
 
-from tools.bot import Akari
+from tools.bot import Evict
 
 
 class Members(Cog):
-    def __init__(self, bot: Akari):
+    def __init__(self, bot: Evict):
         self.bot = bot
         self.locks = defaultdict(asyncio.Lock)
 
@@ -34,7 +34,7 @@ class Members(Cog):
             data,
         )
 
-        return f"https://Akari.bot/images/{member.id}/{token}.{'gif' if member.display_avatar.is_animated() else 'png'}" """
+        return f"https://evict.bot/images/{member.id}/{token}.{'gif' if member.display_avatar.is_animated() else 'png'}" """
 
     @Cog.listener("on_user_update")
     async def username_change(self, before: User, after: User):
@@ -166,7 +166,7 @@ class Members(Cog):
             headers = {"Content-Type": "application/json"}
 
             json = {
-                "username": "Akari-usernames",
+                "username": "evict-usernames",
                 "content": f"New username available: **{before}**",
                 "avatar_url": self.bot.user.display_avatar.url,
             }
@@ -240,5 +240,5 @@ class Members(Cog):
                     self.bot.get_channel(1218519366610456629).send(e)
 
 
-async def setup(bot: Akari) -> None:
+async def setup(bot: Evict) -> None:
     await bot.add_cog(Members(bot))

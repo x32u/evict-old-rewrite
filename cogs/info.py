@@ -1,6 +1,6 @@
 import git, datetime
-from tools.bot import Akari
-from tools.helpers import AkariContext
+from tools.bot import Evict
+from tools.helpers import EvictContext
 
 from discord import User, Embed, __version__, utils, Permissions
 from discord.ext.commands import Cog, command, hybrid_command
@@ -8,11 +8,11 @@ from discord.ui import View, Button
 
 from platform import python_version
 
-REPO_PATH = "/root/AkariBot/.git"
+REPO_PATH = "/root/evict/.git"
 
 
 class Info(Cog):
-    def __init__(self, bot: Akari):
+    def __init__(self, bot: Evict):
         self.bot = bot
         self.description = "Information commands"
 
@@ -31,7 +31,7 @@ class Info(Cog):
         return view
 
     @hybrid_command(name="commands", aliases=["h", "cmds"])
-    async def _help(self, ctx: AkariContext, *, command: str = None):
+    async def _help(self, ctx: EvictContext, *, command: str = None):
         """
         The help command menu
         """
@@ -51,7 +51,7 @@ class Info(Cog):
             return await ctx.send_help(_command)
 
     @command()
-    async def getbotinvite(self, ctx: AkariContext, *, member: User):
+    async def getbotinvite(self, ctx: EvictContext, *, member: User):
         """
         Get the bot invite based on it's id
         """
@@ -62,7 +62,7 @@ class Info(Cog):
         await ctx.reply(ctx.author.mention, view=self.create_bot_invite(member))
 
     @hybrid_command()
-    async def ping(self, ctx: AkariContext):
+    async def ping(self, ctx: EvictContext):
         """
         Displays the bot's latency
         """
@@ -75,7 +75,7 @@ class Info(Cog):
         )
 
     @hybrid_command(aliases=["up"])
-    async def uptime(self, ctx: AkariContext):
+    async def uptime(self, ctx: EvictContext):
         """
         Displays how long has the bot been online for
         """
@@ -88,7 +88,7 @@ class Info(Cog):
         )
 
     @hybrid_command(aliases=["bi", "bot", "info", "about"])
-    async def botinfo(self, ctx: AkariContext):
+    async def botinfo(self, ctx: EvictContext):
         """
         Displays information about the bot
         """
@@ -100,7 +100,7 @@ class Info(Cog):
         embed = (
             Embed(
                 color=self.bot.color,
-                description=f"Premium multi-purpose Discord bot made by [**The Akari Team**](https://discord.gg/akaribot)\nUsed by **{sum(g.member_count for g in self.bot.guilds):,}** members in **{len(self.bot.guilds):,}** servers\nDevelopers: [Nick](https://discord.com/users/863914425445908490) **&** [Sin](https://discord.com/users/598125772754124823)",
+                description=f"Premium multi-purpose Discord bot made by [**The evict Team**](https://discord.gg/evict)\nUsed by **{sum(g.member_count for g in self.bot.guilds):,}** members in **{len(self.bot.guilds):,}** servers\nDevelopers: [Nick](https://discord.com/users/863914425445908490) **&** [Sin](https://discord.com/users/598125772754124823)",
                 timestamp=datetime.datetime.now(),
             )
             .set_author(
@@ -117,7 +117,7 @@ class Info(Cog):
         await ctx.reply(embed=embed)
 
     @hybrid_command()
-    async def shards(self, ctx: AkariContext):
+    async def shards(self, ctx: EvictContext):
         """
         Check status of each bot shard
         """
@@ -138,7 +138,7 @@ class Info(Cog):
         await ctx.reply(embed=embed)
 
     @hybrid_command(aliases=["inv", "link"])
-    async def invite(self, ctx: AkariContext):
+    async def invite(self, ctx: EvictContext):
         """
         Send an invite link of the bot
         """
@@ -146,18 +146,18 @@ class Info(Cog):
         await ctx.reply(ctx.author.mention, view=self.create_bot_invite(ctx.guild.me))
 
     @hybrid_command(name="credits")
-    async def credits(self, ctx: AkariContext):
+    async def credits(self, ctx: EvictContext):
         """
         Get more specific credits for the bot
         """
 
         embed = Embed(
-            description=f"[**Nick**](<https://discord.com/users/863914425445908490>): Developer\n[**Sin**](<https://discord.com/users/598125772754124823>): Developer\n[**Lina**](https://discord.com/users/1082206057213988864): Akari name idea",
+            description=f"[**Nick**](<https://discord.com/users/863914425445908490>): Developer\n[**Sin**](<https://discord.com/users/598125772754124823>): Developer\n[**Lina**](https://discord.com/users/1082206057213988864): evict name idea",
             color=self.bot.color,
         ).set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar.url)
 
         await ctx.reply(embed=embed)
 
 
-async def setup(bot: Akari) -> None:
+async def setup(bot: Evict) -> None:
     return await bot.add_cog(Info(bot))

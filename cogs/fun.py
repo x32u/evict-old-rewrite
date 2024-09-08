@@ -30,11 +30,11 @@ from discord.ext.commands import (
 from typing import List
 from aiogtts import aiogTTS
 
-from tools.bot import Akari
-from tools.helpers import AkariContext
+from tools.bot import Evict
+from tools.helpers import EvictContext
 
 from tools.converters import AbleToMarry
-from tools.helpers import AkariContext
+from tools.helpers import EvictContext
 from tools.misc.views import MarryView
 
 
@@ -328,7 +328,7 @@ class TicTacToe(View):
 
 
 class RockPaperScissors(View):
-    def __init__(self, ctx: AkariContext):
+    def __init__(self, ctx: EvictContext):
         self.ctx = ctx
         self.get_emoji = {"rock": "🪨", "paper": "📰", "scissors": "✂️"}
         self.status = False
@@ -663,14 +663,14 @@ class BlackTea:
 
 
 class Fun(Cog):
-    def __init__(self, bot: Akari):
+    def __init__(self, bot: Evict):
         self.bot = bot
         self.wedding = "💒"
         self.marry_color = 0xFF819F
         self.description = "Fun commands"
         self.songkey = "348c90f9d1mshf17b25698213ae5p186e51jsn84ed67bb1fe9"
 
-    async def stats_execute(self, ctx: AkariContext, member: User) -> Message:
+    async def stats_execute(self, ctx: EvictContext, member: User) -> Message:
         """
         Execute any of the stats commands
         """
@@ -698,7 +698,7 @@ class Fun(Cog):
         return value
 
     @hybrid_command()
-    async def quran(self, ctx: AkariContext):
+    async def quran(self, ctx: EvictContext):
         """
         Get a random quran verse
         """
@@ -719,7 +719,7 @@ class Fun(Cog):
         return await ctx.reply(embed=embed)
 
     @hybrid_command()
-    async def bible(self, ctx: AkariContext):
+    async def bible(self, ctx: EvictContext):
         """
         Get a random bible verse
         """
@@ -736,7 +736,7 @@ class Fun(Cog):
         await ctx.reply(embed=embed)
 
     @hybrid_command()
-    async def blacktea(self, ctx: AkariContext):
+    async def blacktea(self, ctx: EvictContext):
         """
         play blacktea with the server members
         """
@@ -842,7 +842,7 @@ class Fun(Cog):
         invoke_without_command=True,
         description="check a member's stats for a certain game",
     )
-    async def stats(self, ctx: AkariContext):
+    async def stats(self, ctx: EvictContext):
         """
         check a member's stats for a certain game
         """
@@ -850,7 +850,7 @@ class Fun(Cog):
         await ctx.create_pages()
 
     @stats.command(name="tictactoe", aliases=["ttt"])
-    async def stats_ttt(self, ctx: AkariContext, *, member: User = Author):
+    async def stats_ttt(self, ctx: EvictContext, *, member: User = Author):
         """
         View a member's stats for tictactoe
         """
@@ -858,7 +858,7 @@ class Fun(Cog):
         await self.stats_execute(ctx, member)
 
     @stats.command(name="blacktea")
-    async def stats_blacktea(self, ctx: AkariContext, *, member: User = Author):
+    async def stats_blacktea(self, ctx: EvictContext, *, member: User = Author):
         """
         View a member's stats for blacktea
         """
@@ -866,7 +866,7 @@ class Fun(Cog):
         await self.stats_execute(ctx, member)
 
     @stats.command(name="rockpaperscissors", aliases=["rps"])
-    async def stats_rps(self, ctx: AkariContext, *, member: User = Author):
+    async def stats_rps(self, ctx: EvictContext, *, member: User = Author):
         """
         View a member's stats for rockpaperscissors
         """
@@ -874,7 +874,7 @@ class Fun(Cog):
         await self.stats_execute(ctx, member)
 
     @command()
-    async def pack(self, ctx: AkariContext, *, member: Member):
+    async def pack(self, ctx: EvictContext, *, member: Member):
         """
         Pack a member
         """
@@ -891,7 +891,7 @@ class Fun(Cog):
         )
 
     @hybrid_command(name="8ball")
-    async def eightball(self, ctx: AkariContext, *, question: str):
+    async def eightball(self, ctx: EvictContext, *, question: str):
         """
         Ask the 8ball a question
         """
@@ -902,7 +902,7 @@ class Fun(Cog):
         )
 
     @hybrid_command()
-    async def bird(self, ctx: AkariContext):
+    async def bird(self, ctx: EvictContext):
         """
         Send a random bird image
         """
@@ -913,7 +913,7 @@ class Fun(Cog):
         )
 
     @hybrid_command()
-    async def dog(self, ctx: AkariContext):
+    async def dog(self, ctx: EvictContext):
         """
         Send a random dog image
         """
@@ -927,7 +927,7 @@ class Fun(Cog):
         )
 
     @hybrid_command()
-    async def cat(self, ctx: AkariContext):
+    async def cat(self, ctx: EvictContext):
         """
         Send a random cat image
         """
@@ -942,7 +942,7 @@ class Fun(Cog):
         )
 
     @hybrid_command()
-    async def capybara(self, ctx: AkariContext):
+    async def capybara(self, ctx: EvictContext):
         """
         Send a random capybara image
         """
@@ -957,7 +957,7 @@ class Fun(Cog):
         )
 
     @hybrid_command(aliases=["fact", "uf"])
-    async def uselessfact(self, ctx: AkariContext):
+    async def uselessfact(self, ctx: EvictContext):
         """
         Returns an useless fact
         """
@@ -970,7 +970,7 @@ class Fun(Cog):
         await ctx.reply(data)
 
     @hybrid_command(aliases=["rps"])
-    async def rockpaperscisssors(self, ctx: AkariContext):
+    async def rockpaperscisssors(self, ctx: EvictContext):
         """
         Play rockpapaerscissors
         """
@@ -984,7 +984,7 @@ class Fun(Cog):
         view.message = await ctx.reply(embed=embed, view=view)
 
     @command(name="choose")
-    async def choose_cmd(self, ctx: AkariContext, *, choices: str):
+    async def choose_cmd(self, ctx: EvictContext, *, choices: str):
         """
         Choose between options
         """
@@ -995,10 +995,10 @@ class Fun(Cog):
             )
 
         final = random.choice(choices).strip()
-        return await ctx.akari_send(f"I chose `{final}`")
+        return await ctx.evict_send(f"I chose `{final}`")
 
     @command(name="quickpoll", aliases=["poll"])
-    async def quickpoll_cmd(self, ctx: AkariContext, *, question: str):
+    async def quickpoll_cmd(self, ctx: EvictContext, *, question: str):
         """
         Create a poll
         """
@@ -1023,7 +1023,7 @@ class Fun(Cog):
         )
 
     @hybrid_command()
-    async def advice(self, ctx: AkariContext):
+    async def advice(self, ctx: EvictContext):
         """
         Get a random advice
         """
@@ -1034,7 +1034,7 @@ class Fun(Cog):
         return await ctx.reply(data["slip"]["advice"])
 
     @hybrid_command(name="tictactoe", aliases=["ttt"])
-    async def tictactoe(self, ctx: AkariContext, *, member: Member):
+    async def tictactoe(self, ctx: EvictContext, *, member: Member):
         """
         Play tictactoe with a member
         """
@@ -1052,7 +1052,7 @@ class Fun(Cog):
         )
 
     @command(aliases=["tts"])
-    async def textospeech(self, ctx: AkariContext, *, message: str):
+    async def textospeech(self, ctx: EvictContext, *, message: str):
         """
         Convert your message into audio
         """
@@ -1061,7 +1061,7 @@ class Fun(Cog):
         await ctx.reply(file=File(r"tts.mp3"))
 
     @command()
-    async def gay(self, ctx: AkariContext, *, member: Member = Author):
+    async def gay(self, ctx: EvictContext, *, member: Member = Author):
         """
         Gay rate a member
         """
@@ -1075,7 +1075,7 @@ class Fun(Cog):
         return await ctx.reply(embed=embed)
 
     @command()
-    async def furry(self, ctx: AkariContext, *, member: Member = Author):
+    async def furry(self, ctx: EvictContext, *, member: Member = Author):
         """
         Furry rate a member
         """
@@ -1087,7 +1087,7 @@ class Fun(Cog):
         return await ctx.reply(embed=embed)
 
     @command(name="dadjoke", aliases=["cringejoke"])
-    async def dadjoke(self, ctx: AkariContext):
+    async def dadjoke(self, ctx: EvictContext):
         """
         Get a random dad joke.
         """
@@ -1097,10 +1097,10 @@ class Fun(Cog):
             )
         except asyncio.TimeoutError:
             return await ctx.warning("Womp Womp! Couldn't get a dad joke at this time.")
-        return await ctx.akari_send(f"{joke['attachments'][0]['text']}")
+        return await ctx.evict_send(f"{joke['attachments'][0]['text']}")
 
     @command(name="meme")
-    async def meme(self, ctx: AkariContext):
+    async def meme(self, ctx: EvictContext):
         """
         Generate a random meme.
         """
@@ -1115,7 +1115,7 @@ class Fun(Cog):
         await ctx.reply(embed=embed)
 
     @command(name="lick", aliases=["slurp"])
-    async def lick(self, ctx: AkariContext, *, member: Member = Author):
+    async def lick(self, ctx: EvictContext, *, member: Member = Author):
         """
         Lick someone!
         """
@@ -1140,7 +1140,7 @@ class Fun(Cog):
         await ctx.reply(embed=embed)
 
     @command()
-    async def pp(self, ctx: AkariContext, *, member: Member = Author):
+    async def pp(self, ctx: EvictContext, *, member: Member = Author):
         """
         Check someone's pp size
         """
@@ -1156,7 +1156,7 @@ class Fun(Cog):
         await ctx.reply(embed=embed)
 
     @hybrid_command()
-    async def kiss(self, ctx: AkariContext, *, member: Member):
+    async def kiss(self, ctx: EvictContext, *, member: Member):
         """
         Kiss a member
         """
@@ -1177,7 +1177,7 @@ class Fun(Cog):
         return await ctx.reply(embed=embed)
 
     @hybrid_command()
-    async def pinch(self, ctx: AkariContext, *, member: Member):
+    async def pinch(self, ctx: EvictContext, *, member: Member):
         """
         Pinch a member
         """
@@ -1194,7 +1194,7 @@ class Fun(Cog):
         return await ctx.reply(embed=embed)
 
     @hybrid_command()
-    async def cuddle(self, ctx: AkariContext, *, member: Member):
+    async def cuddle(self, ctx: EvictContext, *, member: Member):
         """
         Cuddle a member
         """
@@ -1214,7 +1214,7 @@ class Fun(Cog):
         return await ctx.reply(embed=embed)
 
     @hybrid_command()
-    async def hug(self, ctx: AkariContext, *, member: Member):
+    async def hug(self, ctx: EvictContext, *, member: Member):
         """
         Hug a member
         """
@@ -1234,7 +1234,7 @@ class Fun(Cog):
         return await ctx.reply(embed=embed)
 
     @hybrid_command()
-    async def pat(self, ctx: AkariContext, *, member: Member):
+    async def pat(self, ctx: EvictContext, *, member: Member):
         """
         Pat a member
         """
@@ -1254,7 +1254,7 @@ class Fun(Cog):
         return await ctx.reply(embed=embed)
 
     @hybrid_command()
-    async def slap(self, ctx: AkariContext, *, member: Member):
+    async def slap(self, ctx: EvictContext, *, member: Member):
         """
         Slap a member
         """
@@ -1274,7 +1274,7 @@ class Fun(Cog):
         return await ctx.reply(embed=embed)
 
     @hybrid_command()
-    async def laugh(self, ctx: AkariContext):
+    async def laugh(self, ctx: EvictContext):
         """
         Start laughing
         """
@@ -1293,7 +1293,7 @@ class Fun(Cog):
         return await ctx.reply(embed=embed)
 
     @hybrid_command()
-    async def cry(self, ctx: AkariContext):
+    async def cry(self, ctx: EvictContext):
         """
         Start crying
         """
@@ -1313,7 +1313,7 @@ class Fun(Cog):
         return await ctx.reply(embed=embed)
 
     @hybrid_command()
-    async def marry(self, ctx: AkariContext, *, member: AbleToMarry):
+    async def marry(self, ctx: EvictContext, *, member: AbleToMarry):
         """
         Marry a member
         """
@@ -1326,7 +1326,7 @@ class Fun(Cog):
         view.message = await ctx.reply(content=member.mention, embed=embed, view=view)
 
     @hybrid_command()
-    async def marriage(self, ctx: AkariContext, *, member: User = Author):
+    async def marriage(self, ctx: EvictContext, *, member: User = Author):
         """
         View an user's marriage
         """
@@ -1346,7 +1346,7 @@ class Fun(Cog):
         return await ctx.reply(embed=embed)
 
     @hybrid_command()
-    async def divorce(self, ctx: AkariContext):
+    async def divorce(self, ctx: EvictContext):
         """
         Divorce from your partner
         """
@@ -1394,7 +1394,7 @@ class Fun(Cog):
         )
 
     @hybrid_command(name="song", aliases=["music", "beat", "songinfo"])
-    async def song(self, ctx: AkariContext, *, title: str):
+    async def song(self, ctx: EvictContext, *, title: str):
         """
         get information about a song
         """

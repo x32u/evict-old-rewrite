@@ -30,10 +30,10 @@ class Roblox(BaseModel):
 class RobloxUser(commands.Converter):
     async def convert(self, ctx: commands.Context, argument: str) -> Roblox:
         async with aiohttp.ClientSession(
-            headers={"api-key": ctx.bot.akari_api}
+            headers={"api-key": ctx.bot.evict_api}
         ) as session:
             async with session.get(
-                "https://api.akari.bot/roblox", params={"username": argument}
+                "https://kure.pl/roblox", params={"username": argument}
             ) as r:
                 match r.status:
                     case 404:

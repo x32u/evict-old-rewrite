@@ -1,12 +1,12 @@
 from discord.ui import View, button, Button
 from discord import ButtonStyle, Interaction
 
-from tools.helpers import AkariContext
+from tools.helpers import EvictContext
 from .modals import BasicModal, AuthorModal, ImagesModal, FooterModal
 
 
 class EmbedBuilding(View):
-    def __init__(self, ctx: AkariContext):
+    def __init__(self, ctx: EvictContext):
         self.ctx = ctx
         super().__init__(timeout=None)
 

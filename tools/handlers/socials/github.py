@@ -5,7 +5,7 @@ from discord.ext import commands
 
 from pydantic import BaseModel
 from typing import Optional, Any
-from tools.helpers import AkariContext
+from tools.helpers import EvictContext
 
 
 class Github(BaseModel):
@@ -26,7 +26,7 @@ class Github(BaseModel):
 
 
 class GithubUser(commands.Converter):
-    async def convert(self, ctx: AkariContext, argument: str) -> Github:
+    async def convert(self, ctx: EvictContext, argument: str) -> Github:
 
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36",

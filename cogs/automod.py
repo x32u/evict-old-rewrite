@@ -31,15 +31,15 @@ from discord.ext.commands import (
 from typing import Tuple, List
 from collections import defaultdict
 
-from tools.bot import Akari
+from tools.bot import Evict
 from tools.converters import NoStaff
 from tools.validators import ValidTime
-from tools.helpers import AkariContext
+from tools.helpers import EvictContext
 from tools.predicates import antispam_enabled
 
 
 class Automod(Cog):
-    def __init__(self, bot: Akari):
+    def __init__(self, bot: Evict):
         self.bot = bot
         self.description = "Automod commands"
         self.spam_cache = {}
@@ -226,7 +226,7 @@ class Automod(Cog):
 
     @filter_joins.command(name="enable", brief="administrator", aliases=["e"])
     @has_guild_permissions(administrator=True)
-    async def filter_joins_enable(self, ctx: AkariContext):
+    async def filter_joins_enable(self, ctx: EvictContext):
         """enable mass join protection"""
         if await self.bot.db.fetchrow(
             "SELECT * FROM anti_join WHERE guild_id = $1", ctx.guild.id
@@ -242,7 +242,7 @@ class Automod(Cog):
 
     @filter_joins.command(name="disable", brief="administrator", aliases=["dis"])
     @has_guild_permissions(administrator=True)
-    async def filter_joins_disable(self, ctx: AkariContext):
+    async def filter_joins_disable(self, ctx: EvictContext):
         """disable mass join protection"""
         if not await self.bot.db.fetchrow(
             "SELECT * FROM anti_join WHERE guild_id = $1", ctx.guild.id
@@ -256,7 +256,7 @@ class Automod(Cog):
 
     @filter_joins.command(name="rate", brief="administrator")
     @has_guild_permissions(administrator=True)
-    async def filter_joins_rate(self, ctx: AkariContext, rate: int):
+    async def filter_joins_rate(self, ctx: EvictContext, rate: int):
         """change the number of allowed members to join per 5 seconds before triggering anti mass join"""
         if await self.bot.db.fetchrow(
             "SELECT * FROM anti_join WHERE guild_id = $1", ctx.guild.id
@@ -278,7 +278,7 @@ class Automod(Cog):
 
     @chat_filter_spam.command(name="enable", brief="manage server")
     @has_guild_permissions(manage_guild=True)
-    async def chat_filter_spam_enable(self, ctx: AkariContext):
+    async def chat_filter_spam_enable(self, ctx: EvictContext):
         """enable the protection against message spamming"""
         if not await self.bot.db.fetchrow(
             "SELECT * FROM antispam WHERE guild_id = $1", ctx.guild.id
@@ -296,7 +296,7 @@ class Automod(Cog):
     @chat_filter_spam.command(name="disable", brief="manage server")
     @has_guild_permissions(manage_guild=True)
     @antispam_enabled()
-    async def chat_filter_spam_disable(self, ctx: AkariContext):
+    async def chat_filter_spam_disable(self, ctx: EvictContext):
         """disable the protection against message spamming"""
 
         async def yes_func(interaction: Interaction):
@@ -327,7 +327,7 @@ class Automod(Cog):
     @chat_filter_spam.command(name="rate", brief="manage guild")
     @has_guild_permissions(manage_guild=True)
     @antispam_enabled()
-    async def chat_filter_spam_rate(self, ctx: AkariContext, rate: int):
+    async def chat_filter_spam_rate(self, ctx: EvictContext, rate: int):
         """change the limit of sending messages per 10 seconds"""
         if rate < 2:
             return await ctx.warning("The rate cannot be lower than **2**")
@@ -342,7 +342,7 @@ class Automod(Cog):
     @chat_filter_spam.command(name="timeout", brief="manage guild")
     @has_guild_permissions(manage_guild=True)
     @antispam_enabled()
-    async def chat_filter_spam_timeout(self, ctx: AkariContext, time: ValidTime):
+    async def chat_filter_spam_timeout(self, ctx: EvictContext, time: ValidTime):
         """modify the amount of time the users will be timed out for spamming"""
         await self.bot.db.execute(
             "UPDATE antispam SET timeout = $1 WHERE guild_id = $2", time, ctx.guild.id
@@ -353,7 +353,7 @@ class Automod(Cog):
 
     @chat_filter_spam.command(name="settings", aliases=["stats", "statistics"])
     @antispam_enabled()
-    async def chat_filter_spam_settings(self, ctx: AkariContext):
+    async def chat_filter_spam_settings(self, ctx: EvictContext):
         """check the settings for antispam"""
         check = await self.bot.db.fetchrow(
             "SELECT * FROM antispam WHERE guild_id = $1", ctx.guild.id
@@ -416,7 +416,7 @@ class Automod(Cog):
     @has_guild_permissions(manage_guild=True)
     @antispam_enabled()
     async def chat_filter_spam_unwhitelist(
-        self, ctx: AkariContext, type: str, *, target: str
+        self, ctx: EvictContext, type: str, *, target: str
     ):
         """unwhitelist the whitelisted channels and users from antispam"""
         if type == "user":
@@ -428,7 +428,7 @@ class Automod(Cog):
         else:
             return await ctx.warning("Available types: user, channel")
 
-    async def chat_filter_spam_uwl_user(self, ctx: AkariContext, member: NoStaff):
+    async def chat_filter_spam_uwl_user(self, ctx: EvictContext, member: NoStaff):
         """unwhitelist an user from antispam"""
         check = await self.bot.db.fetchval(
             "SELECT users FROM antispam WHERE guild_id = $1", ctx.guild.id
@@ -451,7 +451,7 @@ class Automod(Cog):
         return await ctx.success(f"Unwhitelisted {member.mention} from anti spam")
 
     async def chat_filter_spam_uwl_channel(
-        self, ctx: AkariContext, channel: TextChannel
+        self, ctx: EvictContext, channel: TextChannel
     ):
         """unwhitelist an user from antispam"""
         check = await self.bot.db.fetchval(
@@ -485,7 +485,7 @@ class Automod(Cog):
     @has_guild_permissions(manage_guild=True)
     @antispam_enabled()
     async def chat_filter_spam_whitelist(
-        self, ctx: AkariContext, type: str, *, target: str
+        self, ctx: EvictContext, type: str, *, target: str
     ):
         """manage the users and channels where spamming is allowed"""
         if type == "user":
@@ -498,7 +498,7 @@ class Automod(Cog):
             return await ctx.warning("Available types: user, channel")
 
     async def chat_filter_spam_wl_channel(
-        self, ctx: AkariContext, channel: TextChannel
+        self, ctx: EvictContext, channel: TextChannel
     ):
         """whitelist a channel from antispam"""
         check = await self.bot.db.fetchval(
@@ -523,7 +523,7 @@ class Automod(Cog):
         )
         return await ctx.success(f"Whitelisted {channel.mention} from anti spam")
 
-    async def chat_filter_spam_wl_user(self, ctx: AkariContext, member: NoStaff):
+    async def chat_filter_spam_wl_user(self, ctx: EvictContext, member: NoStaff):
         """whitelist an user for antispam"""
         check = await self.bot.db.fetchval(
             "SELECT users FROM antispam WHERE guild_id = $1", ctx.guild.id
@@ -555,7 +555,7 @@ class Automod(Cog):
     @chat_filter_invites.command(name="enable", brief="manage server")
     @has_guild_permissions(manage_guild=True)
     @bot_has_guild_permissions(manage_guild=True)
-    async def chat_filter_invites_enable(self, ctx: AkariContext):
+    async def chat_filter_invites_enable(self, ctx: EvictContext):
         """
         Enable the invite filter
         """
@@ -604,7 +604,7 @@ class Automod(Cog):
     @chat_filter_invites.command(name="disable", brief="manage server")
     @has_guild_permissions(manage_guild=True)
     @bot_has_guild_permissions(manage_guild=True)
-    async def chat_filter_invites_disable(self, ctx: AkariContext):
+    async def chat_filter_invites_disable(self, ctx: EvictContext):
         """disable the filter for discord invites"""
         check = await self.bot.db.fetchrow(
             "SELECT rule_id FROM filter WHERE guild_id = $1 AND mode = $2",
@@ -636,7 +636,7 @@ class Automod(Cog):
     @has_guild_permissions(manage_guild=True)
     @bot_has_guild_permissions(manage_guild=True)
     async def chat_filter_invites_whitelist(
-        self, ctx: AkariContext, *, channel: TextChannel
+        self, ctx: EvictContext, *, channel: TextChannel
     ):
         """make channels imune from the invites filter"""
         check = await self.bot.db.fetchrow(
@@ -675,7 +675,7 @@ class Automod(Cog):
     @has_guild_permissions(manage_guild=True)
     @bot_has_guild_permissions(manage_guild=True)
     async def chat_filter_invites_unwhitelist(
-        self, ctx: AkariContext, *, channel: TextChannel
+        self, ctx: EvictContext, *, channel: TextChannel
     ):
         """remove the channel's immunity from the invites filter"""
         check = await self.bot.db.fetchrow(
@@ -709,7 +709,7 @@ class Automod(Cog):
         )
 
     @chat_filter_invites.command(name="whitelisted", aliases=["exempted"])
-    async def chat_filter_invites_whitelisted(self, ctx: AkariContext):
+    async def chat_filter_invites_whitelisted(self, ctx: EvictContext):
         """returns the imune channels from the invites filter"""
         check = await self.bot.db.fetchrow(
             "SELECT rule_id FROM filter WHERE guild_id = $1 AND mode = $2",
@@ -747,7 +747,7 @@ class Automod(Cog):
     @chat_filter_words.command(name="add", brief="manage server")
     @has_guild_permissions(manage_guild=True)
     @bot_has_guild_permissions(manage_guild=True)
-    async def chat_filter_words_add(self, ctx: AkariContext, *, word: str):
+    async def chat_filter_words_add(self, ctx: EvictContext, *, word: str):
         """add a word to the filter"""
         check = await self.bot.db.fetchrow(
             "SELECT rule_id FROM filter WHERE guild_id = $1 AND mode = $2",
@@ -797,7 +797,7 @@ class Automod(Cog):
     @chat_filter_words.command(name="remove", brief="manage server")
     @has_guild_permissions(manage_guild=True)
     @bot_has_guild_permissions(manage_guild=True)
-    async def chat_filter_words_remove(self, ctx: AkariContext, *, word: str):
+    async def chat_filter_words_remove(self, ctx: EvictContext, *, word: str):
         """remove a word from the filter"""
         check = await self.bot.db.fetchrow(
             "SELECT rule_id FROM filter WHERE guild_id = $1 AND mode = $2",
@@ -834,7 +834,7 @@ class Automod(Cog):
     @chat_filter_words.command(name="clear", brief="manage server")
     @has_guild_permissions(manage_guild=True)
     @bot_has_guild_permissions(manage_guild=True)
-    async def chat_filter_words_clear(self, ctx: AkariContext):
+    async def chat_filter_words_clear(self, ctx: EvictContext):
         """delete the entire word rule"""
         check = await self.bot.db.fetchrow(
             "SELECT rule_id FROM filter WHERE guild_id = $1 AND mode = $2",
@@ -858,7 +858,7 @@ class Automod(Cog):
         return await ctx.success("Word filter has been clear")
 
     @chat_filter_words.command(name="list")
-    async def chat_filter_words_list(self, ctx: AkariContext):
+    async def chat_filter_words_list(self, ctx: EvictContext):
         """check a list of words that are not allowed in this server"""
         results = await self.bot.db.fetchrow(
             "SELECT rule_id FROM filter WHERE guild_id = $1 AND mode = $2",
@@ -892,7 +892,7 @@ class Automod(Cog):
     @has_guild_permissions(manage_guild=True)
     @bot_has_guild_permissions(manage_guild=True)
     async def chat_filter_words_whitelist(
-        self, ctx: AkariContext, *, channel: TextChannel
+        self, ctx: EvictContext, *, channel: TextChannel
     ):
         """make channels imune from the word filter"""
         check = await self.bot.db.fetchrow(
@@ -927,7 +927,7 @@ class Automod(Cog):
     @has_guild_permissions(manage_guild=True)
     @bot_has_guild_permissions(manage_guild=True)
     async def chat_filter_words_unwhitelist(
-        self, ctx: AkariContext, *, channel: TextChannel
+        self, ctx: EvictContext, *, channel: TextChannel
     ):
         """remove the channel's immunity from the words filter"""
         check = await self.bot.db.fetchrow(
@@ -960,7 +960,7 @@ class Automod(Cog):
         )
 
     @chat_filter_words.command(name="whitelisted", aliases=["exempted"])
-    async def chat_filter_words_whitelisted(self, ctx: AkariContext):
+    async def chat_filter_words_whitelisted(self, ctx: EvictContext):
         """returns the imune channels from the words filter"""
         check = await self.bot.db.fetchrow(
             "SELECT rule_id FROM filter WHERE guild_id = $1 AND mode = $2",
@@ -991,5 +991,5 @@ class Automod(Cog):
         )
 
 
-async def setup(bot: Akari) -> None:
+async def setup(bot: Evict) -> None:
     return await bot.add_cog(Automod(bot))

@@ -56,7 +56,7 @@ class confessModal(Modal, title="confess here"):
             )
             e.set_author(
                 name=f"anonymous confession #{count}",
-                url="https://discord.gg/akaribot",
+                url="https://discord.gg/evict",
             )
 
             e.set_footer(text="type /confess to send a confession")

@@ -1,17 +1,17 @@
 from discord import Embed, TextChannel, Message, abc, Interaction
 from discord.ext.commands import Cog, group, has_guild_permissions, BadArgument
 
-from tools.bot import Akari
-from tools.helpers import AkariContext
+from tools.bot import Evict
+from tools.helpers import EvictContext
 from tools.predicates import query_limit
 
 
 class Events(Cog):
-    def __init__(self, bot: Akari):
+    def __init__(self, bot: Evict):
         self.bot = bot
         self.description = "Event messages commands"
 
-    async def test_message(self, ctx: AkariContext, channel: TextChannel) -> Message:
+    async def test_message(self, ctx: EvictContext, channel: TextChannel) -> Message:
         table = ctx.command.qualified_name.split(" ")[0]
         check = await self.bot.db.fetchrow(
             f"SELECT * FROM {table} WHERE channel_id = $1", channel.id
@@ -38,13 +38,13 @@ class Events(Cog):
                 )
 
     @group(invoke_without_command=True, aliases=["greet", "wlc", "welc"])
-    async def welcome(self, ctx: AkariContext):
+    async def welcome(self, ctx: EvictContext):
         return await ctx.create_pages()
 
     @welcome.command(name="add", brief="manage guild")
     @has_guild_permissions(manage_guild=True)
     @query_limit("welcome")
-    async def welcome_add(self, ctx: AkariContext, channel: TextChannel, *, code: str):
+    async def welcome_add(self, ctx: EvictContext, channel: TextChannel, *, code: str):
         """add a welcome message to the server"""
         check = await self.bot.db.fetchrow(
             "SELECT * FROM welcome WHERE channel_id = $1", channel.id
@@ -70,7 +70,7 @@ class Events(Cog):
 
     @welcome.command(name="remove", brief="manage guild")
     @has_guild_permissions(manage_guild=True)
-    async def welcome_remove(self, ctx: AkariContext, *, channel: TextChannel):
+    async def welcome_remove(self, ctx: EvictContext, *, channel: TextChannel):
         """remove a welcome message from the server"""
         check = await self.bot.db.fetchrow(
             "SELECT * FROM welcome WHERE channel_id = $1", channel.id
@@ -87,7 +87,7 @@ class Events(Cog):
 
     @welcome.command(name="config", brief="manage guild")
     @has_guild_permissions(manage_guild=True)
-    async def welcome_config(self, ctx: AkariContext):
+    async def welcome_config(self, ctx: EvictContext):
         """view any welcome message from any channel in the server"""
         results = await self.bot.db.fetch(
             "SELECT * FROM welcome WHERE guild_id = $1", ctx.guild.id
@@ -110,13 +110,13 @@ class Events(Cog):
 
     @welcome.command(name="test", brief="manage guild")
     @has_guild_permissions(manage_guild=True)
-    async def welcome_test(self, ctx: AkariContext, *, channel: TextChannel):
+    async def welcome_test(self, ctx: EvictContext, *, channel: TextChannel):
         """test the welcome message in a channel"""
         await self.test_message(ctx, channel)
 
     @welcome.command(name="reset", brief="manage guild")
     @has_guild_permissions(manage_guild=True)
-    async def welcome_reset(self, ctx: AkariContext):
+    async def welcome_reset(self, ctx: EvictContext):
         """
         Delete all the welcome messages
         """
@@ -162,13 +162,13 @@ class Events(Cog):
         )
 
     @group(invoke_without_command=True)
-    async def leave(self, ctx: AkariContext):
+    async def leave(self, ctx: EvictContext):
         return await ctx.create_pages()
 
     @leave.command(name="add", brief="manage guild")
     @has_guild_permissions(manage_guild=True)
     @query_limit("leave")
-    async def leave_add(self, ctx: AkariContext, channel: TextChannel, *, code: str):
+    async def leave_add(self, ctx: EvictContext, channel: TextChannel, *, code: str):
         """add a leave message to the server"""
         check = await self.bot.db.fetchrow(
             "SELECT * FROM leave WHERE channel_id = $1", channel.id
@@ -194,7 +194,7 @@ class Events(Cog):
 
     @leave.command(name="remove", brief="manage guild")
     @has_guild_permissions(manage_guild=True)
-    async def leave_remove(self, ctx: AkariContext, *, channel: TextChannel):
+    async def leave_remove(self, ctx: EvictContext, *, channel: TextChannel):
         """remove a leave message from the server"""
         check = await self.bot.db.fetchrow(
             "SELECT * FROM leave WHERE channel_id = $1", channel.id
@@ -209,7 +209,7 @@ class Events(Cog):
 
     @leave.command(name="config", brief="manage guild")
     @has_guild_permissions(manage_guild=True)
-    async def leave_config(self, ctx: AkariContext):
+    async def leave_config(self, ctx: EvictContext):
         """view any leave message from any channel in the server"""
         results = await self.bot.db.fetch(
             "SELECT * FROM leave WHERE guild_id = $1", ctx.guild.id
@@ -232,13 +232,13 @@ class Events(Cog):
 
     @leave.command(name="test", brief="manage guild")
     @has_guild_permissions(manage_guild=True)
-    async def leave_test(self, ctx: AkariContext, *, channel: TextChannel):
+    async def leave_test(self, ctx: EvictContext, *, channel: TextChannel):
         """test the leave message in a channel"""
         await self.test_message(ctx, channel)
 
     @leave.command(name="reset", brief="manage guild")
     @has_guild_permissions(manage_guild=True)
-    async def leave_reset(self, ctx: AkariContext):
+    async def leave_reset(self, ctx: EvictContext):
         """
         Delete all the leave messages
         """
@@ -286,13 +286,13 @@ class Events(Cog):
     @group(
         invoke_without_command=True,
     )
-    async def boost(self, ctx: AkariContext):
+    async def boost(self, ctx: EvictContext):
         return await ctx.create_pages()
 
     @boost.command(name="add", brief="manage guild")
     @has_guild_permissions(manage_guild=True)
     @query_limit("boost")
-    async def boost_add(self, ctx: AkariContext, channel: TextChannel, *, code: str):
+    async def boost_add(self, ctx: EvictContext, channel: TextChannel, *, code: str):
         """add a boost message to the server"""
         check = await self.bot.db.fetchrow(
             "SELECT * FROM boost WHERE channel_id = $1", channel.id
@@ -318,7 +318,7 @@ class Events(Cog):
 
     @boost.command(name="remove", brief="manage guild")
     @has_guild_permissions(manage_guild=True)
-    async def boost_remove(self, ctx: AkariContext, *, channel: TextChannel):
+    async def boost_remove(self, ctx: EvictContext, *, channel: TextChannel):
         """remove a boost message from the server"""
         check = await self.bot.db.fetchrow(
             "SELECT * FROM boost WHERE channel_id = $1", channel.id
@@ -333,7 +333,7 @@ class Events(Cog):
 
     @boost.command(name="config", brief="manage guild")
     @has_guild_permissions(manage_guild=True)
-    async def boost_config(self, ctx: AkariContext):
+    async def boost_config(self, ctx: EvictContext):
         """view any boost message from any channel in the server"""
         results = await self.bot.db.fetch(
             "SELECT * FROM boost WHERE guild_id = $1", ctx.guild.id
@@ -356,13 +356,13 @@ class Events(Cog):
 
     @boost.command(name="test", brief="manage guild")
     @has_guild_permissions(manage_guild=True)
-    async def boost_test(self, ctx: AkariContext, *, channel: TextChannel):
+    async def boost_test(self, ctx: EvictContext, *, channel: TextChannel):
         """test the boost message in a channel"""
         await self.test_message(ctx, channel)
 
     @boost.command(name="reset", brief="manage guild")
     @has_guild_permissions(manage_guild=True)
-    async def boost_reset(self, ctx: AkariContext):
+    async def boost_reset(self, ctx: EvictContext):
         """
         Delete all the boost messages
         """
@@ -408,5 +408,5 @@ class Events(Cog):
         )
 
 
-async def setup(bot: Akari) -> None:
+async def setup(bot: Evict) -> None:
     return await bot.add_cog(Events(bot))

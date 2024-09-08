@@ -1,13 +1,13 @@
 from discord import Member, User, Forbidden
 from discord.ext.commands import Cog, group, has_permissions
 
-from tools.bot import Akari
-from tools.helpers import AkariContext
+from tools.bot import Evict
+from tools.helpers import EvictContext
 from tools.predicates import whitelist_enabled
 
 
 class Whitelist(Cog):
-    def __init__(self, bot: Akari):
+    def __init__(self, bot: Evict):
         self.bot = bot
         self.description = "Manage members joining your server"
 
@@ -18,7 +18,7 @@ class Whitelist(Cog):
         brief="administrator",
     )
     @has_permissions(administrator=True)
-    async def whitelist(self, ctx: AkariContext):
+    async def whitelist(self, ctx: EvictContext):
         """
         Manage the whitelist module
         """
@@ -27,7 +27,7 @@ class Whitelist(Cog):
 
     @whitelist.command(name="enable", brief="administrator")
     @has_permissions(administrator=True)
-    async def whitelist_enable(self, ctx: AkariContext):
+    async def whitelist_enable(self, ctx: EvictContext):
         """
         Turn on the whitelist system
         """
@@ -54,7 +54,7 @@ class Whitelist(Cog):
     @whitelist.command(name="disable", brief="administrator")
     @has_permissions(administrator=True)
     @whitelist_enabled()
-    async def whitelist_disable(self, ctx: AkariContext):
+    async def whitelist_disable(self, ctx: EvictContext):
         """
         Turn off the whitelist system
         """
@@ -71,7 +71,7 @@ class Whitelist(Cog):
     @whitelist.command(name="message", aliases=["msg", "dm"], brief="administrator")
     @has_permissions(administrator=True)
     @whitelist_enabled()
-    async def whitelist_message(self, ctx: AkariContext, *, code: str):
+    async def whitelist_message(self, ctx: EvictContext, *, code: str):
         """
         Change the message sent to users when not in the whitelist
         """
@@ -112,7 +112,7 @@ class Whitelist(Cog):
     @whitelist.command(name="add", brief="administrator")
     @has_permissions(administrator=True)
     @whitelist_enabled()
-    async def whitelist_add(self, ctx: AkariContext, user: User):
+    async def whitelist_add(self, ctx: EvictContext, user: User):
         """
         Add someone to the server whitelist
         """
@@ -141,7 +141,7 @@ class Whitelist(Cog):
     @whitelist.command(name="remove", brief="administrator")
     @has_permissions(administrator=True)
     @whitelist_enabled()
-    async def whitelist_remove(self, ctx: AkariContext, user: Member | User):
+    async def whitelist_remove(self, ctx: EvictContext, user: Member | User):
         """
         Remove someone from the server whitelist
         """
@@ -186,7 +186,7 @@ class Whitelist(Cog):
     @whitelist.command(name="list", brief="administrator")
     @has_permissions(administrator=True)
     @whitelist_enabled()
-    async def whitelist_list(self, ctx: AkariContext):
+    async def whitelist_list(self, ctx: EvictContext):
         """
         View all whitelisted members
         """
@@ -209,5 +209,5 @@ class Whitelist(Cog):
         )
 
 
-async def setup(bot: Akari):
+async def setup(bot: Evict):
     await bot.add_cog(Whitelist(bot))

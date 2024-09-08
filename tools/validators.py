@@ -3,14 +3,14 @@ import emoji
 import humanfriendly
 
 from discord.ext import commands
-from tools.helpers import AkariContext
+from tools.helpers import EvictContext
 
 from .handlers.lastfmhandler import Handler
 from .exceptions import LastFmException, WrongMessageLink
 
 
 class ValidNickname(commands.Converter):
-    async def convert(self, ctx: AkariContext, argument: str):
+    async def convert(self, ctx: EvictContext, argument: str):
         if argument.lower() == "none":
             return None
         else:
@@ -18,7 +18,7 @@ class ValidNickname(commands.Converter):
 
 
 class ValidTime(commands.Converter):
-    async def convert(self, ctx: AkariContext, argument: str):
+    async def convert(self, ctx: EvictContext, argument: str):
         try:
             time = humanfriendly.parse_timespan(argument)
         except humanfriendly.InvalidTimespan:
@@ -28,7 +28,7 @@ class ValidTime(commands.Converter):
 
 
 class ValidWebhookCode(commands.Converter):
-    async def convert(self, ctx: AkariContext, argument: str):
+    async def convert(self, ctx: EvictContext, argument: str):
         check = await ctx.bot.db.fetchrow(
             "SELECT * FROM webhook WHERE guild_id = $1 AND code = $2",
             ctx.guild.id,
@@ -41,7 +41,7 @@ class ValidWebhookCode(commands.Converter):
 
 
 class ValidEmoji(commands.EmojiConverter):
-    async def convert(self, ctx: AkariContext, argument: str):
+    async def convert(self, ctx: EvictContext, argument: str):
         try:
             emoj = await super().convert(ctx, argument)
         except commands.BadArgument:
@@ -52,7 +52,7 @@ class ValidEmoji(commands.EmojiConverter):
 
 
 class ValidPermission(commands.Converter):
-    async def convert(self, ctx: AkariContext, argument: str):
+    async def convert(self, ctx: EvictContext, argument: str):
         valid_permissions = [p[0] for p in ctx.author.guild_permissions]
 
         if not argument in valid_permissions:
@@ -64,7 +64,7 @@ class ValidPermission(commands.Converter):
 
 
 class ValidCommand(commands.Converter):
-    async def convert(self, ctx: AkariContext, argument: str):
+    async def convert(self, ctx: EvictContext, argument: str):
         if not argument:
             return None
 
@@ -82,7 +82,7 @@ class ValidCommand(commands.Converter):
 
 
 class ValidCog(commands.Converter):
-    async def convert(self, ctx: AkariContext, argument: str):
+    async def convert(self, ctx: EvictContext, argument: str):
         if not argument:
             return None
 
@@ -103,7 +103,7 @@ class ValidCog(commands.Converter):
 
 
 class ValidAutoreact(commands.EmojiConverter):
-    async def convert(self, ctx: AkariContext, argument: str):
+    async def convert(self, ctx: EvictContext, argument: str):
         try:
             emoj = await super().convert(ctx, argument)
         except commands.BadArgument:
@@ -118,7 +118,7 @@ class ValidLastFmName(commands.Converter):
     def __init__(self):
         self.lastfmhandler = Handler("43693facbb24d1ac893a7d33846b15cc")
 
-    async def convert(self, ctx: AkariContext, argument: str):
+    async def convert(self, ctx: EvictContext, argument: str):
         check = await ctx.bot.db.fetchrow(
             "SELECT username FROM lastfm WHERE user_id = $1", ctx.author.id
         )
@@ -152,7 +152,7 @@ class ValidLastFmName(commands.Converter):
 
 class ValidMessage(commands.MessageConverter):
 
-    async def convert(self, ctx: AkariContext, argument: str):
+    async def convert(self, ctx: EvictContext, argument: str):
         try:
             message = await super().convert(ctx, argument)
         except:
@@ -165,7 +165,7 @@ class ValidMessage(commands.MessageConverter):
 
 
 class ValidReskinName(commands.Converter):
-    async def convert(self, ctx: AkariContext, argument: str):
+    async def convert(self, ctx: EvictContext, argument: str):
         texts = list(
             map(
                 lambda t: t.strip(),

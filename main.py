@@ -1,23 +1,22 @@
-import discord
-from tools.bot import Akari
-from tools.helpers import AkariContext
+from tools.bot import Evict
+from tools.helpers import EvictContext
 
-bot = Akari()
+bot = Evict()
 
 
 @bot.before_invoke
-async def chunk_guild(ctx: AkariContext) -> None:
+async def chunk_guild(ctx: EvictContext) -> None:
     if not ctx.guild.chunked:
         await ctx.guild.chunk(cache=True)
 
 
 @bot.check
-async def check_availability(ctx: AkariContext) -> bool:
+async def check_availability(ctx: EvictContext) -> bool:
     return True
 
 
 @bot.check
-async def disabled_command(ctx: AkariContext):
+async def disabled_command(ctx: EvictContext):
     
     if await ctx.bot.db.fetchrow(
         
@@ -53,7 +52,7 @@ async def disabled_command(ctx: AkariContext):
         if global_disabled.get("disabled") and ctx.author.id not in ctx.bot.owner_ids:
             
             await ctx.warning(
-                "This command is currently disabled by the admin team of Akari, for further information please join the [Akari Server](https://discord.gg/akaribot)."
+                "This command is currently disabled by the admin team of evict, for further information please join the [evict Server](https://discord.gg/evict)."
             )
             
             return False
@@ -61,7 +60,7 @@ async def disabled_command(ctx: AkariContext):
 
 
 @bot.check
-async def disabled_module(ctx: AkariContext):
+async def disabled_module(ctx: EvictContext):
     
     if ctx.command.cog:
         if await ctx.bot.db.fetchrow(
@@ -93,7 +92,7 @@ async def disabled_module(ctx: AkariContext):
 
 
 @bot.check
-async def restricted_command(ctx: AkariContext):
+async def restricted_command(ctx: EvictContext):
     
     if ctx.author.id == ctx.guild.owner_id:
         return True

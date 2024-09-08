@@ -3,7 +3,7 @@ import aiohttp
 from typing import Optional
 from pydantic import BaseModel
 from discord.ext import commands
-from tools.helpers import AkariContext
+from tools.helpers import EvictContext
 
 
 class Snapchat(BaseModel):
@@ -20,10 +20,10 @@ class Snapchat(BaseModel):
 
 
 class SnapUser(commands.Converter):
-    async def convert(self, ctx: AkariContext, argument: str) -> Snapchat:
-        async with aiohttp.ClientSession(headers={"api-key": ctx.bot.akari_api}) as cs:
+    async def convert(self, ctx: EvictContext, argument: str) -> Snapchat:
+        async with aiohttp.ClientSession(headers={"api-key": ctx.bot.evict_api}) as cs:
             async with cs.get(
-                "https://api.akari.bot/snapchat", params={"username": argument}
+                "https://kure.pl/snapchat", params={"username": argument}
             ) as r:
                 if r.status != 200:
                     raise commands.BadArgument(

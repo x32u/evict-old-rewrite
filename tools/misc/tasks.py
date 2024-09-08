@@ -38,14 +38,14 @@ async def shard_stats(bot: AB):
         shards.append(shard_info)
 
         shard_data = {
-            "bot": "Akari",  # Replace with your bot's name or identifier
+            "bot": "evict",  # Replace with your bot's name or identifier
             "shards": shards,
         }
 
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.post(
-                    "https://api.akari.bot/shards/post",  # Updated FastAPI server URL
+                    "https://kure.pl/shards/post",  # Updated FastAPI server URL
                     json=shard_data,
                     headers={
                         "api-key": "04ced35d-34ab-4094-86b2-6b7e45f8ab83"

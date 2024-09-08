@@ -13,13 +13,13 @@ from discord.ui import View, Button
 from discord.ext.commands import Cog, CooldownMapping, BucketType
 from discord import AllowedMentions, Message, MessageType, File, Embed, Webhook
 
-from tools.bot import Akari
+from tools.bot import Evict
 from tools.exceptions import ApiError
 from tools.validators import ValidAutoreact
 
 
 class Messages(Cog):
-    def __init__(self, bot: Akari):
+    def __init__(self, bot: Evict):
         self.bot = bot
         self._ccd = CooldownMapping.from_cooldown(4, 6, BucketType.channel)
         self.locks = defaultdict(asyncio.Lock)
@@ -41,7 +41,7 @@ class Messages(Cog):
             if webhook.user == self.bot.user:
                 return webhook
 
-        return await channel.create_webhook(name="akari")
+        return await channel.create_webhook(name="evict")
 
     async def get_ratelimit(self, message: Message) -> Optional[int]:
         """
@@ -60,7 +60,7 @@ class Messages(Cog):
         if not cooldown:
             async with self.locks[message.guild.id]:
                 async with message.channel.typing():
-                    url = message.content[len("Akari") + 1 :]
+                    url = message.content[len("evict") + 1 :]
                     try:
                         await message.delete()
                     except:
@@ -111,7 +111,7 @@ class Messages(Cog):
 
                     file = File(
                         await self.bot.getbyte(post_data["url"]),
-                        filename=f"Akari_instagram.{post_data['extension']}",
+                        filename=f"evict_instagram.{post_data['extension']}",
                     )
                     return await message.channel.send(file=file, view=view)
 
@@ -124,7 +124,7 @@ class Messages(Cog):
         if not cooldown:
             async with self.locks[message.guild.id]:
 
-                url = message.content[len("Akari") + 1 :]
+                url = message.content[len("evict") + 1 :]
                 try:
                     await message.delete()
                 except:
@@ -160,7 +160,7 @@ class Messages(Cog):
                         video = x["data"]["play"]
                         file = File(
                             fp=await self.bot.getbyte(video),
-                            filename="Akaritiktok.mp4",
+                            filename="evicttiktok.mp4",
                         )
                         embed = Embed(
                             color=self.bot.color,
@@ -390,16 +390,16 @@ class Messages(Cog):
         if (
             message.guild
             and not message.author.bot
-            and message.content.startswith("Akari")
+            and message.content.startswith("evict")
         ):
             if re.search(
                 r"\bhttps?:\/\/(?:m|www|vm)\.tiktok\.com\/\S*?\b(?:(?:(?:usr|v|embed|user|video)\/|\?shareId=|\&item_id=)(\d+)|(?=\w{7})(\w*?[A-Z\d]\w*)(?=\s|\/$))\b",
-                message.content[len("Akari") + 1 :],
+                message.content[len("evict") + 1 :],
             ):
                 return await self.repost_tiktok(message)
             elif re.search(
                 r"((?:https?:\/\/)?(?:www\.)?instagram\.com\/(?:p|reel)\/([^/?#&]+)).*",
-                message.content[len("Akari") + 1 :],
+                message.content[len("evict") + 1 :],
             ):
                 return await self.repost_instagram(message)
 

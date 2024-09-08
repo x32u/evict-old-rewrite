@@ -19,7 +19,7 @@ from copy import copy
 from num2words import num2words
 from humanize import precisedelta
 
-from AkariAPI import API
+from kureAPI import API
 
 from discord.gateway import DiscordWebSocket
 
@@ -28,9 +28,9 @@ from .persistent.tickets import TicketView
 from .persistent.giveaway import GiveawayView
 
 from .helpers import (
-    AkariContext,
+    EvictContext,
     identify,
-    AkariHelp,
+    evictHelp,
     guild_perms,
     CustomInteraction,
     AntinukeMeasures,
@@ -97,7 +97,7 @@ class Record(asyncpg.Record):
         return self[name]
 
 
-class Akari(commands.AutoShardedBot):
+class Evict(commands.AutoShardedBot):
     """
     The discord bot
     """
@@ -106,7 +106,7 @@ class Akari(commands.AutoShardedBot):
         super().__init__(
             command_prefix=getprefix,
             intents=intents,
-            help_command=AkariHelp(),
+            help_command=evictHelp(),
             owner_ids=[863914425445908490, 598125772754124823],  # nick  # sin
             case_insensitive=True,
             shard_count=1,
@@ -118,7 +118,7 @@ class Akari(commands.AutoShardedBot):
             ),
             member_cache=discord.MemberCacheFlags(joined=True, voice=True),
             activity=discord.CustomActivity(
-                name="🔗 akari.bot/discord",
+                name="🔗 evict.bot/discord",
             ),
         )
 
@@ -146,8 +146,8 @@ class Akari(commands.AutoShardedBot):
         self.cache = Cache()
         self.proxy_url = os.environ.get("proxy_url")
         self.other_bots = {}
-        self.akari_api = os.environ.get("akari_key")
-        self.api = API(self.akari_api)
+        self.evict_api = os.environ.get("evict_key")
+        self.api = API(self.evict_api)
         self.an = AntinukeMeasures(self)
         self.embed_build = EmbedScript()
         self.pfps_send = True
@@ -253,8 +253,8 @@ class Akari(commands.AutoShardedBot):
         return await asyncpg.create_pool(**self.login_data)
 
     async def get_context(
-        self, message: discord.Message, cls=AkariContext
-    ) -> AkariContext:
+        self, message: discord.Message, cls=EvictContext
+    ) -> EvictContext:
         """
         Get the bot's custom context
         """
@@ -269,7 +269,7 @@ class Akari(commands.AutoShardedBot):
                 for result in results:
                     if channel := self.get_channel(result.channel_id):
                         await asyncio.sleep(0.001)
-                        directory = f"/root/AkariBot/api/images/{kind.capitalize()}"
+                        directory = f"/root/evict/api/images/{kind.capitalize()}"
                         category = (
                             result.category
                             if result.category != "random"
@@ -333,9 +333,9 @@ class Akari(commands.AutoShardedBot):
         return urllib.parse.unquote(urllib.parse.quote_plus(url))
 
     async def setup_hook(self) -> None:
-        from .redis import AkariRedis
+        from .redis import evictRedis
 
-        self.redis = await AkariRedis.from_url()
+        self.redis = await evictRedis.from_url()
 
         log.info("Starting bot")
         if not self.db:
@@ -394,7 +394,7 @@ class Akari(commands.AutoShardedBot):
         await self.start_loops()
 
     async def on_command_error(
-        self, ctx: AkariContext, error: commands.CommandError
+        self, ctx: EvictContext, error: commands.CommandError
     ) -> Any:
         """
         The place where the command errors raise
@@ -506,7 +506,7 @@ class Akari(commands.AutoShardedBot):
                 )
 
         elif isinstance(error, commands.CommandOnCooldown):
-            return await ctx.akari_send(
+            return await ctx.evict_send(
                 f"Wait **{error.retry_after:.2f} seconds** before using **{ctx.command.qualified_name}** again"
             )
 
@@ -547,7 +547,7 @@ class Akari(commands.AutoShardedBot):
             )
             embed = discord.Embed(
                 description=f"{self.warning} {ctx.author.mention}: An error occurred while running the **{ctx.command.qualified_name}** command."
-                + f"\nPlease report the attached code to a developer in the [Akari server](https://discord.gg/akaribot)",
+                + f"\nPlease report the attached code to a developer in the [evict server](https://discord.gg/evict)",
                 color=self.warning_color,
             )
 
@@ -653,7 +653,7 @@ class Akari(commands.AutoShardedBot):
                 return await self.process_commands(after)
 
     async def check_availability(
-        self, message: discord.Message, ctx: AkariContext
+        self, message: discord.Message, ctx: EvictContext
     ) -> bool:
         return True
 
@@ -686,7 +686,7 @@ class Akari(commands.AutoShardedBot):
                     await self.process_commands(message)
 
 
-async def getprefix(bot: Akari, message: discord.Message) -> List[str]:
+async def getprefix(bot: Evict, message: discord.Message) -> List[str]:
     """
     Return the actual prefixes for the bot
     """

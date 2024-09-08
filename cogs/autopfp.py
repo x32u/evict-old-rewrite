@@ -5,16 +5,16 @@ import discord
 from discord.ext import commands
 
 from typing import Literal
-from tools.bot import Akari
-from tools.helpers import AkariContext
+from tools.bot import Evict
+from tools.helpers import EvictContext
 
 
 class Autopfp(commands.Cog):
-    def __init__(self, bot: Akari):
+    def __init__(self, bot: Evict):
         self.bot = bot
 
     @commands.hybrid_group(invoke_without_command=True)
-    async def autopfp(self, ctx: AkariContext):
+    async def autopfp(self, ctx: EvictContext):
         """
         Automatically send pfps to a channel in this server
         """
@@ -26,7 +26,7 @@ class Autopfp(commands.Cog):
     @commands.bot_has_guild_permissions(manage_webhooks=True)
     async def autopfp_add(
         self,
-        ctx: AkariContext,
+        ctx: EvictContext,
         channel: discord.TextChannel,
         category: Literal["random", "roadmen", "girl", "egirl", "anime"] = "random",
     ):
@@ -56,7 +56,7 @@ class Autopfp(commands.Cog):
     @commands.has_guild_permissions(manage_guild=True)
     async def autopfp_remove(
         self,
-        ctx: AkariContext,
+        ctx: EvictContext,
         category: Literal["random", "roadmen", "girl", "egirl", "anime"] = "random",
     ):
         """
@@ -76,7 +76,7 @@ class Autopfp(commands.Cog):
         return await ctx.success(f"Stopped sending **{category}** pfps")
 
     @commands.hybrid_group()
-    async def autobanner(self, ctx: AkariContext):
+    async def autobanner(self, ctx: EvictContext):
         """
         Automatically send banners to a channel
         """
@@ -88,7 +88,7 @@ class Autopfp(commands.Cog):
     @commands.bot_has_guild_permissions(manage_webhooks=True)
     async def autobanner_add(
         self,
-        ctx: AkariContext,
+        ctx: EvictContext,
         channel: discord.TextChannel,
         category: Literal["random", "cute", "mix", "imsg"] = "random",
     ):
@@ -118,7 +118,7 @@ class Autopfp(commands.Cog):
     @commands.has_guild_permissions(manage_guild=True)
     async def autobanner_remove(
         self,
-        ctx: AkariContext,
+        ctx: EvictContext,
         category: Literal["random", "cute", "mix", "imsg"] = "random",
     ):
         """
