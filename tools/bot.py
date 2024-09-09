@@ -43,11 +43,9 @@ from .misc.tasks import (
     snipe_delete,
     shit_loop,
     bump_remind,
-    check_monthly_guilds,
     gw_loop,
     reminder_task,
-    counter_update,
-    shard_stats,
+    counter_update
 )
 
 from .handlers.embedbuilder import EmbedScript
@@ -118,7 +116,7 @@ class Evict(commands.AutoShardedBot):
             ),
             member_cache=discord.MemberCacheFlags(joined=True, voice=True),
             activity=discord.CustomActivity(
-                name="🔗 evict.bot/discord",
+                name="🔗 evict.cc/discord",
             ),
         )
 
@@ -136,17 +134,21 @@ class Evict(commands.AutoShardedBot):
         self.yes = "<:check:1233186176245039155>"
         self.yes_color = 0x48DB01
         self.time = datetime.datetime.now()
+        
         self.mcd = commands.CooldownMapping.from_cooldown(
             3, 5, commands.BucketType.user
         )
         self.ccd = commands.CooldownMapping.from_cooldown(
             4, 5, commands.BucketType.channel
         )
+        
         self.session = Session()
         self.cache = Cache()
+        
+        self.evict_api = os.environ.get("evict_key")
         self.proxy_url = os.environ.get("proxy_url")
         self.other_bots = {}
-        self.evict_api = os.environ.get("evict_key")
+        
         self.api = API(self.evict_api)
         self.an = AntinukeMeasures(self)
         self.embed_build = EmbedScript()
@@ -320,10 +322,9 @@ class Evict(commands.AutoShardedBot):
         pomelo_task.start(self)
         gw_loop.start(self)
         bump_remind.start(self)
-        check_monthly_guilds.start(self)
         reminder_task.start(self)
         counter_update.start(self)
-        shard_stats.start(self)
+        # shard_stats.start(self)
 
     def url_encode(self, url: str):
         """
@@ -360,9 +361,6 @@ class Evict(commands.AutoShardedBot):
             except:
                 log.warning(f"Unable to load {file}")
 
-        for file in [f[:-3] for f in os.listdir("./events") if f.endswith(".py")]:
-            await self.load_extension(f"events.{file}")
-
         log.info("Loaded all cogs")
         await self.load_views()
         log.info("Loaded views")
@@ -388,7 +386,7 @@ class Evict(commands.AutoShardedBot):
     async def on_ready(self) -> None:
         log.info(f"Connected as {self.user}")
         asyncio.ensure_future(self.__chunk_guilds())
-        await Music(self).start_nodes()
+        # await Music(self).start_nodes()
         asyncio.ensure_future(self.autoposting("pfps"))
         asyncio.ensure_future(self.autoposting("banners"))
         await self.start_loops()

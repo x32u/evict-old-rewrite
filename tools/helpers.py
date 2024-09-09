@@ -384,7 +384,7 @@ class evictHelp(Help):
         self, mapping: Mapping[Cog | None, List[Command[Any, Callable[..., Any], Any]]]
     ) -> Coroutine[Any, Any, None]:
         await self.context.send(
-            f"{self.context.author.mention} check <https://evict.bot/commands> for the list of all commands"
+            f"{self.context.author.mention} check <https://evict.cc/commands> for the list of all commands"
         )
 
     async def send_group_help(self, group: Group):

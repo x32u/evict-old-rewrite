@@ -52,7 +52,7 @@ async def disabled_command(ctx: EvictContext):
         if global_disabled.get("disabled") and ctx.author.id not in ctx.bot.owner_ids:
             
             await ctx.warning(
-                "This command is currently disabled by the admin team of evict, for further information please join the [evict Server](https://discord.gg/evict)."
+                "This command is currently disabled by the admin team of Evict, for further information please join the [evict Server](https://discord.gg/evict)."
             )
             
             return False

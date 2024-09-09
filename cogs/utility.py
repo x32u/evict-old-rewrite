@@ -1,5 +1,4 @@
 import uwuify
-import random
 import asyncio
 import discord
 import datetime
@@ -9,7 +8,8 @@ import dateutil.parser
 import validators
 import os
 import aiohttp
-import json
+import re
+import rembg
 
 from nudenet import NudeDetector
 
@@ -25,10 +25,15 @@ from typing import Union, Optional, Any
 from shazamio import Shazam
 
 from tools.bot import Evict
-from tools.misc.views import Donate
 from tools.validators import ValidTime
 from tools.helpers import EvictContext
-from tools.predicates import is_afk, is_there_a_reminder, reminder_exists
+
+from tools.predicates import (
+    is_afk, 
+    is_there_a_reminder, 
+    reminder_exists
+)
+
 from tools.misc.utils import (
     Timezone,
     BdayDate,
@@ -38,22 +43,18 @@ from tools.misc.utils import (
     get_color,
 )
 
-from tools.handlers.socials.github import GithubUser
-from tools.handlers.socials.snapchat import SnapUser
-from tools.handlers.socials.roblox import RobloxUser
-from tools.handlers.socials.tiktok import TikTokUser
-from tools.handlers.socials.cashapp import CashappUser
-from tools.handlers.socials.instagram import InstagramUser
-from tools.handlers.socials.weather import WeatherLocation
+from tools.misc.socials import (
+    GithubUser,
+    SnapUser,
+    RobloxUser,
+    TikTokUser,
+    CashappUser,
+    InstagramUser,
+    WeatherLocation
+)
 
 from deep_translator import GoogleTranslator
 from deep_translator.exceptions import LanguageNotSupportedException
-
-from io import BytesIO
-
-import re
-import rembg
-
 
 class Color(commands.Converter):
     async def convert(self, ctx: EvictContext, argument: str):
@@ -316,7 +317,7 @@ class Utility(commands.Cog):
 
         embed = discord.Embed(
             color=self.bot.color,
-            url=f"https://images.evict.bot/avatarhistory/{member.id}",
+            url=f"https://images.evict.cc/avatarhistory/{member.id}",
             title=f"{member.name}'s avatar history ({length})",
         )
         return await ctx.reply(embed=embed)"""

@@ -2,7 +2,7 @@ import arrow
 import datetime
 import discord
 
-from ..bot import evict
+from ..bot import Evict
 from ..helpers import EvictContext
 
 from discord import User, Member

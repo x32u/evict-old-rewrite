@@ -8,7 +8,7 @@ from discord.ui import View, Button
 
 from platform import python_version
 
-REPO_PATH = "/root/evict/.git"
+REPO_PATH = "/root/temp-rewrite/.git"
 
 
 class Info(Cog):
@@ -100,7 +100,7 @@ class Info(Cog):
         embed = (
             Embed(
                 color=self.bot.color,
-                description=f"Premium multi-purpose Discord bot made by [**The evict Team**](https://discord.gg/evict)\nUsed by **{sum(g.member_count for g in self.bot.guilds):,}** members in **{len(self.bot.guilds):,}** servers\nDevelopers: [Nick](https://discord.com/users/863914425445908490) **&** [Sin](https://discord.com/users/598125772754124823)",
+                description=f"Premium multi-purpose Discord bot made by [**The Evict Team**](https://discord.gg/evict)\nUsed by **{sum(g.member_count for g in self.bot.guilds):,}** members in **{len(self.bot.guilds):,}** servers\nDevelopers: [**divinity**](https://discord.com/users/598125772754124823)",
                 timestamp=datetime.datetime.now(),
             )
             .set_author(
@@ -152,7 +152,7 @@ class Info(Cog):
         """
 
         embed = Embed(
-            description=f"[**Nick**](<https://discord.com/users/863914425445908490>): Developer\n[**Sin**](<https://discord.com/users/598125772754124823>): Developer\n[**Lina**](https://discord.com/users/1082206057213988864): evict name idea",
+            description=f"Developer\n[**divinity**](<https://discord.com/users/598125772754124823>)",
             color=self.bot.color,
         ).set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar.url)
 
