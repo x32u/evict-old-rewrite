@@ -13,7 +13,15 @@ import json
 import aiohttp
 
 from PIL import Image
-from typing import Any, List, Union, Optional, Set
+
+from typing import (
+    Any, 
+    List, 
+    Union, 
+    Optional, 
+    Set
+)
+
 from copy import copy
 
 from num2words import num2words
@@ -23,9 +31,11 @@ from kureAPI import API
 
 from discord.gateway import DiscordWebSocket
 
-from .persistent.vm import VoiceMasterView
-from .persistent.tickets import TicketView
-from .persistent.giveaway import GiveawayView
+from tools.misc.persistent import (
+    VoiceMasterView,
+    TicketView,
+    GiveawayView
+)
 
 from .helpers import (
     EvictContext,
@@ -97,7 +107,7 @@ class Record(asyncpg.Record):
 
 class Evict(commands.AutoShardedBot):
     """
-    The discord bot
+    The Discord Bot
     """
 
     def __init__(self, db: asyncpg.Pool = None):
@@ -105,16 +115,19 @@ class Evict(commands.AutoShardedBot):
             command_prefix=getprefix,
             intents=intents,
             help_command=evictHelp(),
-            owner_ids=[863914425445908490, 598125772754124823],  # nick  # sin
+            owner_ids=[598125772754124823],
             case_insensitive=True,
-            shard_count=1,
+            shard_count=2,
             chunk_guilds_at_startup=False,
             strip_after_prefix=True,
             enable_debug_events=True,
+            
             allowed_mentions=discord.AllowedMentions(
                 everyone=False, roles=False, replied_user=False
             ),
-            member_cache=discord.MemberCacheFlags(joined=True, voice=True),
+            member_cache=discord.MemberCacheFlags(
+                joined=True, voice=True
+            ),
             activity=discord.CustomActivity(
                 name="🔗 evict.cc/discord",
             ),
@@ -147,9 +160,8 @@ class Evict(commands.AutoShardedBot):
         
         self.evict_api = os.environ.get("evict_key")
         self.proxy_url = os.environ.get("proxy_url")
-        self.other_bots = {}
-        
         self.api = API(self.evict_api)
+        
         self.an = AntinukeMeasures(self)
         self.embed_build = EmbedScript()
         self.pfps_send = True
